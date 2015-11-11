@@ -1,0 +1,395 @@
+\documentclass[conference]{IEEEtran}
+% Some Computer Society conferences also require the compsoc mode option,
+% but others use the standard conference format.
+%
+% If IEEEtran.cls has not been installed into the LaTeX system files,
+% manually specify the path to it like:
+% \documentclass[conference]{../sty/IEEEtran}
+
+
+
+
+
+% Some very useful LaTeX packages include:
+% (uncomment the ones you want to load)
+
+
+% *** MISC UTILITY PACKAGES ***
+%
+%\usepackage{ifpdf}
+% Heiko Oberdiek's ifpdf.sty is very useful if you need conditional
+% compilation based on whether the output is pdf or dvi.
+% usage:
+% \ifpdf
+%   % pdf code
+% \else
+%   % dvi code
+% \fi
+% The latest version of ifpdf.sty can be obtained from:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/oberdiek/
+% Also, note that IEEEtran.cls V1.7 and later provides a builtin
+% \ifCLASSINFOpdf conditional that works the same way.
+% When switching from latex to pdflatex and vice-versa, the compiler may
+% have to be run twice to clear warning/error messages.
+
+
+
+
+
+
+% *** CITATION PACKAGES ***
+%
+%\usepackage{cite}
+% cite.sty was written by Donald Arseneau
+% V1.6 and later of IEEEtran pre-defines the format of the cite.sty package
+% \cite{} output to follow that of IEEE. Loading the cite package will
+% result in citation numbers being automatically sorted and properly
+% "compressed/ranged". e.g., [1], [9], [2], [7], [5], [6] without using
+% cite.sty will become [1], [2], [5]--[7], [9] using cite.sty. cite.sty's
+% \cite will automatically add leading space, if needed. Use cite.sty's
+% noadjust option (cite.sty V3.8 and later) if you want to turn this off
+% such as if a citation ever needs to be enclosed in parenthesis.
+% cite.sty is already installed on most LaTeX systems. Be sure and use
+% version 5.0 (2009-03-20) and later if using hyperref.sty.
+% The latest version can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/cite/
+% The documentation is contained in the cite.sty file itself.
+
+
+
+
+
+
+% *** GRAPHICS RELATED PACKAGES ***
+%
+\ifCLASSINFOpdf
+   \usepackage[pdftex]{graphicx}
+  % declare the path(s) where your graphic files are
+   \graphicspath{{../pdf/}{../jpeg/}}
+  % and their extensions so you won't have to specify these with
+  % every instance of \includegraphics
+   \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
+\else
+  % or other class option (dvipsone, dvipdf, if not using dvips). graphicx
+  % will default to the driver specified in the system graphics.cfg if no
+  % driver is specified.
+  % \usepackage[dvips]{graphicx}
+  % declare the path(s) where your graphic files are
+  % \graphicspath{{../eps/}}
+  % and their extensions so you won't have to specify these with
+  % every instance of \includegraphics
+  % \DeclareGraphicsExtensions{.eps}
+\fi
+% graphicx was written by David Carlisle and Sebastian Rahtz. It is
+% required if you want graphics, photos, etc. graphicx.sty is already
+% installed on most LaTeX systems. The latest version and documentation
+% can be obtained at: 
+% http://www.ctan.org/tex-archive/macros/latex/required/graphics/
+% Another good source of documentation is "Using Imported Graphics in
+% LaTeX2e" by Keith Reckdahl which can be found at:
+% http://www.ctan.org/tex-archive/info/epslatex/
+%
+% latex, and pdflatex in dvi mode, support graphics in encapsulated
+% postscript (.eps) format. pdflatex in pdf mode supports graphics
+% in .pdf, .jpeg, .png and .mps (metapost) formats. Users should ensure
+% that all non-photo figures use a vector format (.eps, .pdf, .mps) and
+% not a bitmapped formats (.jpeg, .png). IEEE frowns on bitmapped formats
+% which can result in "jaggedy"/blurry rendering of lines and letters as
+% well as large increases in file sizes.
+%
+% You can find documentation about the pdfTeX application at:
+% http://www.tug.org/applications/pdftex
+
+
+
+
+
+% *** MATH PACKAGES ***
+%
+%\usepackage[cmex10]{amsmath}
+% A popular package from the American Mathematical Society that provides
+% many useful and powerful commands for dealing with mathematics. If using
+% it, be sure to load this package with the cmex10 option to ensure that
+% only type 1 fonts will utilized at all point sizes. Without this option,
+% it is possible that some math symbols, particularly those within
+% footnotes, will be rendered in bitmap form which will result in a
+% document that can not be IEEE Xplore compliant!
+%
+% Also, note that the amsmath package sets \interdisplaylinepenalty to 10000
+% thus preventing page breaks from occurring within multiline equations. Use:
+%\interdisplaylinepenalty=2500
+% after loading amsmath to restore such page breaks as IEEEtran.cls normally
+% does. amsmath.sty is already installed on most LaTeX systems. The latest
+% version and documentation can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/required/amslatex/math/
+
+
+
+
+
+% *** SPECIALIZED LIST PACKAGES ***
+%
+%\usepackage{algorithmic}
+% algorithmic.sty was written by Peter Williams and Rogerio Brito.
+% This package provides an algorithmic environment fo describing algorithms.
+% You can use the algorithmic environment in-text or within a figure
+% environment to provide for a floating algorithm. Do NOT use the algorithm
+% floating environment provided by algorithm.sty (by the same authors) or
+% algorithm2e.sty (by Christophe Fiorio) as IEEE does not use dedicated
+% algorithm float types and packages that provide these will not provide
+% correct IEEE style captions. The latest version and documentation of
+% algorithmic.sty can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/algorithms/
+% There is also a support site at:
+% http://algorithms.berlios.de/index.html
+% Also of interest may be the (relatively newer and more customizable)
+% algorithmicx.sty package by Szasz Janos:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/algorithmicx/
+
+
+
+
+% *** ALIGNMENT PACKAGES ***
+%
+%\usepackage{array}
+% Frank Mittelbach's and David Carlisle's array.sty patches and improves
+% the standard LaTeX2e array and tabular environments to provide better
+% appearance and additional user controls. As the default LaTeX2e table
+% generation code is lacking to the point of almost being broken with
+% respect to the quality of the end results, all users are strongly
+% advised to use an enhanced (at the very least that provided by array.sty)
+% set of table tools. array.sty is already installed on most systems. The
+% latest version and documentation can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/required/tools/
+
+
+% IEEEtran contains the IEEEeqnarray family of commands that can be used to
+% generate multiline equations as well as matrices, tables, etc., of high
+% quality.
+
+
+
+
+% *** SUBFIGURE PACKAGES ***
+%\ifCLASSOPTIONcompsoc
+%  \usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+%\else
+%  \usepackage[caption=false,font=footnotesize]{subfig}
+%\fi
+% subfig.sty, written by Steven Douglas Cochran, is the modern replacement
+% for subfigure.sty, the latter of which is no longer maintained and is
+% incompatible with some LaTeX packages including fixltx2e. However,
+% subfig.sty requires and automatically loads Axel Sommerfeldt's caption.sty
+% which will override IEEEtran.cls' handling of captions and this will result
+% in non-IEEE style figure/table captions. To prevent this problem, be sure
+% and invoke subfig.sty's "caption=false" package option (available since
+% subfig.sty version 1.3, 2005/06/28) as this is will preserve IEEEtran.cls
+% handling of captions.
+% Note that the Computer Society format requires a larger sans serif font
+% than the serif footnote size font used in traditional IEEE formatting
+% and thus the need to invoke different subfig.sty package options depending
+% on whether compsoc mode has been enabled.
+%
+% The latest version and documentation of subfig.sty can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/subfig/
+
+
+
+
+% *** FLOAT PACKAGES ***
+%
+%\usepackage{fixltx2e}
+% fixltx2e, the successor to the earlier fix2col.sty, was written by
+% Frank Mittelbach and David Carlisle. This package corrects a few problems
+% in the LaTeX2e kernel, the most notable of which is that in current
+% LaTeX2e releases, the ordering of single and double column floats is not
+% guaranteed to be preserved. Thus, an unpatched LaTeX2e can allow a
+% single column figure to be placed prior to an earlier double column
+% figure. The latest version and documentation can be found at:
+% http://www.ctan.org/tex-archive/macros/latex/base/
+
+
+%\usepackage{stfloats}
+% stfloats.sty was written by Sigitas Tolusis. This package gives LaTeX2e
+% the ability to do double column floats at the bottom of the page as well
+% as the top. (e.g., "\begin{figure*}[!b]" is not normally possible in
+% LaTeX2e). It also provides a command:
+%\fnbelowfloat
+% to enable the placement of footnotes below bottom floats (the standard
+% LaTeX2e kernel puts them above bottom floats). This is an invasive package
+% which rewrites many portions of the LaTeX2e float routines. It may not work
+% with other packages that modify the LaTeX2e float routines. The latest
+% version and documentation can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/sttools/
+% Do not use the stfloats baselinefloat ability as IEEE does not allow
+% \baselineskip to stretch. Authors submitting work to the IEEE should note
+% that IEEE rarely uses double column equations and that authors should try
+% to avoid such use. Do not be tempted to use the cuted.sty or midfloat.sty
+% packages (also by Sigitas Tolusis) as IEEE does not format its papers in
+% such ways.
+% Do not attempt to use stfloats with fixltx2e as they are incompatible.
+% Instead, use Morten Hogholm'a dblfloatfix which combines the features
+% of both fixltx2e and stfloats:
+%
+% \usepackage{dblfloatfix}
+% The latest version can be found at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/dblfloatfix/
+
+
+
+
+% *** PDF, URL AND HYPERLINK PACKAGES ***
+%
+%\usepackage{url}
+% url.sty was written by Donald Arseneau. It provides better support for
+% handling and breaking URLs. url.sty is already installed on most LaTeX
+% systems. The latest version and documentation can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/url/
+% Basically, \url{my_url_here}.
+
+
+
+
+% *** Do not adjust lengths that control margins, column widths, etc. ***
+% *** Do not use packages that alter fonts (such as pslatex).         ***
+% There should be no need to do such things with IEEEtran.cls V1.6 and later.
+% (Unless specifically asked to do so by the journal or conference you plan
+% to submit to, of course. )
+
+
+% correct bad hyphenation here
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+% CUSTOM PACKAGES
+%\usepackage{lettrine}
+\usepackage{amsmath}
+\renewcommand{\arraystretch}{1.3}
+\usepackage{etoolbox}
+\apptocmd{\thebibliography}{\setlength{\itemsep}{0.6pt}}{}{}
+\usepackage{url}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{colortbl}
+\usepackage{xcolor}
+\definecolor{light-gray}{gray}{0.78}
+\usepackage{epstopdf}
+\usepackage{lettrine}
+
+
+\begin{document}
+
+\title{A Tool-chain for Instruction Set Architecture Design}
+
+\author{
+\IEEEauthorblockN{Alessandro de Gennaro}
+\IEEEauthorblockA{School of Electrical and\\Electronic Engineering\\
+Newcastle University\\
+Newcastle upon Tyne, United Kingdom\\
+Email: a.de-gennaro@ncl.ac.uk}
+\and
+\IEEEauthorblockN{Paulius Stankaitis}
+\IEEEauthorblockA{School of Computing Science\\
+Newcastle University\\
+Newcastle upon Tyne, United Kingdom\\
+Email: paulius.stankaitis@ncl.ac.uk}}
+
+% use for special paper notices
+%\IEEEspecialpapernotice{(Invited Paper)}
+
+\maketitle
+
+\begin{abstract}
+Adopting a systematic approach for the design of a processor instruction set is instrumental for tackling the complexity, which rules most of modern processors.
+
+We present a tool-chain which follows the designer through all the phases of the design, from the specification of instructions to the hardware synthesis of a microcontroller. The flow is also meant to simplify the understanding of the Instruction Set Architecture (ISA) reference manuals. Often, these documents are semi-formal, hard to read and fully understand. We believe that designers will benefit from a visual graph-based model, automatically derived from the ISA specification, and customisable to fit different needs. Some of the tools have already been developed and tested on ARMv6-M architecture, others yet need to be fully implemented.
+
+The design flow will be integrated inside the Workcraft framework. We also compare the presented approach with the others available in the literature.
+\end{abstract}
+
+% no keywords
+
+% For peer review papers, you can put extra information on the cover
+% page as needed:
+% \ifCLASSOPTIONpeerreview
+% \begin{center} \bfseries EDICS Category: 3-BBND \end{center}
+% \fi
+%
+% For peerreview papers, this IEEEtran command inserts a page break and
+% creates the second title. It will be ignored for other modes.
+\IEEEpeerreviewmaketitle
+
+
+\section{Introduction}
+\label{sec:intro}
+%\lettrine[nindent=0em,lines=2]{T}
+Technology progress allows industries to integrate always more transistors over the same amount of area, following Moore's law. In turn, design complexity of these systems progressively increases. This led research to be focused on raising the level of abstraction of the languages used at the early-stages of design. This work presents a design flow for an easier specification, visualisation, simulation, customisation and hardware synthesis of instruction sets.
+
+The consultation of an ISA reference manual (i.e. ARMv6-M \cite{armManual}) can be a difficult and tedious operation. Anthony Fox, in his attempt to describe a model of the ARMv7 instruction set, argues: ``official reference manuals are large, stretching to many hundreds of pages - one can easily overlook subtle details or become bogged down with ``uninteresting'' background information'' (\cite{armv7}, section 1). And yet: ``official descriptions are semi-formal (ambiguous)'' (\cite{armv7}, section 1). 
+
+In the light of the above, a simple and formal way to specify and, more specifically, visualise instruction sets is needed. A visual graph-based model can help designers for a quicker comprehension of the processor. ISAs in fact provide a software level description of the hardware itself. We use Conditional Partial Order Graph (CPOG) \cite{cpog},\cite{andreyPhd} as the visualisation model. They can efficiently represent concurrent and sequential behaviours, and already come with a tested tool-kit for the customisation, encoding and hardware synthesis (\cite{workcraft}, \cite{satEncoding}, \cite{acsd}).
+
+We propose a new domain-specific language for ISA specification. The current implementation is embedded in \textit{Haskell} This is a recent and extremely flexible functional language, and provides predefined constructs and classes for our purpose (i.e. monad class).
+
+The article is organised as follows: Section \ref{sec:flow} describes such a design flow, the interactions between the various steps and how this can be helpful. In Section \ref{sec:functionalities}, all the requirements which are and will be supported by the tool chain are discussed. Section \ref{sec:arm} presents a case-study: a subset of ARMv6-M ISA. And finally, Section \ref{sec:conclusion} summarises the achieved results, presenting two more case and outlining the future research directions.
+
+\subsection{Related work}
+
+An attempt to use partial orders to describe the instructions of a complex hardware structure can be found in \cite{maxPhd}. The author uses Conditional Partial Order Graphs to visually describe the instructions of the Intel 8051 Microcontroller. Yet, he used them for building an asynchronous controller and managing the internal execution flow of the datapath elements. The manual construction of partial orders is an error-prone process. Connecting all the operations taking into account their dependencies and order is a complex task. This further inspired our research, and led us to bridge this gap with an automated approach.
+
+Regarding the language we chose to adopt, it is not difficult to find other cases where functional languages have been used as a starting point for ISA specification. In this direction, \cite{isaFunc} provides an interesting attempt to build an infrastructure for instruction set development. The authors developed the concepts of \textit{state} and \textit{transformations}. The former represents the current state of the machine, which evolves over time according to the transformations (instructions). \textit{F. Yuan and K. I. Eder} instead, created a formal and hierarchical model, which can be refined for fitting the needs of a particular ISA. This model (characterised in \cite{isaEventB}) is composed by 4 abstract layers. Each of these layers describes a particular aspect of the instruction set. The deeper the designer explores this hierarchical representation, the more refined will be the final system.
+
+Another example can be found in \cite{armv7}. The authors here build a framework which can be extended to tailor instruction sets. They use a monadic programming style, based on three basic operations: \textit{return}, \textit{bind} and \textit{parallel}. These are meant to mimic the flow of an entity (the hardware system), which is always returned as a result of the execution of an instruction. Instructions can be bound together either sequentially or in parallel. Here, the case study used is the ARMv7, a widespread instruction set embedded by the Cortex-A8 processor. An additional example of how an ISA might be specified inside a tool is present in \cite{isaXml}. Both the modules and the instructions here are introduced via a xml-based language, fairly readable but not very flexible.
+
+%------------------------------------------------
+
+\section{Design flow for ISA}
+\label{sec:flow}
+\section{Supported Functionalities}
+\label{sec:functionalities}
+\section{Case Study (ARMv6-M)}
+\label{sec:arm}
+\section{Conclusion}
+\label{sec:conclusion}
+
+\noindent\textbf{Acknowledgements:} The authors would like to thank Dr. Andrey Mokhov for helping with this work.
+
+\begin{thebibliography}{1}
+
+\bibitem{cpog}
+	A. Mokhov, A. Yakovlev. \emph{``Conditional partial order graphs: Model, synthesis, and application''}. IEEE Transactions on Computers, Volume 59, Pages 1480-1493, November 2010.
+	
+\bibitem{andreyPhd}
+	A. Mokhov. \emph{``Conditional Partial Order Graphs''}. Ph.D. Thesis, Newcastle University, September 2009.	
+
+\bibitem{workcraft}
+	I. Poliakov, D. Sokolov, A. Mokhov. \emph{``Workcraft: A static data flow structure editing, visualisation and analysis tool''}. Petri Nets and Other Models of Concurrency - ICATPN 2007. Pages 505-514, 2007.
+	
+\bibitem{satEncoding}
+	A Mokhov, A Alekseyev, A Yakovlev. \emph{``Encoding of processor instruction sets with explicit concurrency control''}. Computers \& Digital Techniques, IET. Volume 5, Pages 427-439. November 2011.
+	
+\bibitem{acsd}
+	A. de Gennaro, P. Stankaitis, A. Mokhov. \emph{``A Heuristic Algorithm for Deriving Compact Models of Processor Instruction Sets''}. 15th International Conference on Application of Concurrency to System Design (In Press). June 24-26, 2015.
+
+\bibitem{armv7}
+	A. Fox, M. Myreen. \emph{``A Trustworthy Monadic Formalization of the ARMv7 Instruction Set Architecture''}. Interactive Theorem Proving (ITP), pages 243-258, 2010.	
+	
+\bibitem{isaEventB}
+	F. Yuan, K. Eder. \emph{``A Generic Instruction Set Architecture Model in Event-B
+for Early Design Space Exploration''}. Technical Report CSTR-09-006, University of
+Bristol, September 2009.
+
+\bibitem{isaFunc}
+	T. A.Cook, E. Harcourt. \emph{``A Functional Specification Language for Instruction Set Architectures''}. Proceedings of the 1994 International Conference on Computer Languages. Publisher IEEE, pages 11-19. May 1994.
+	
+\bibitem{isaXml}
+	A. Abbas, A. Ahmed, A. Ahmed, W. Uz Zaman Bajwa, A. Anwar, S. Abbasi. \emph{``A retargetable tool-suite for the design of application specific instruction set processors using a machine description language''}. IEEE International Symposium on Circuits and Systems, 2002. Volume 1, pages 425-428. ISCAS 2002.
+	
+\bibitem{maxPhd}
+	M. Rykunov. \emph{``Design of Asynchronous Microprocessor for Power Proportionality''}. Ph.D. Thesis, Newcastle University. Technical Report Series	NCL-EEE-MICRO-TR-2013-182, December 2013.
+	
+\bibitem{armManual}
+	ARM Ltd. \emph{``ARMv6-M Architecture Reference Manual''}. ARM DDI 0419C (ID092410), 2010.
+	
+\end{thebibliography}
+
+\end{document}
