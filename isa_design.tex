@@ -23,9 +23,33 @@
 \definecolor{light-gray}{gray}{0.78}
 \usepackage{epstopdf}
 \usepackage{lettrine}
+\usepackage{listings}
 
 
 \begin{document}
+\lstset{
+  frame=none,
+  xleftmargin=2pt,
+  stepnumber=1,
+  numbers=left,
+  numbersep=5pt,
+  numberstyle=\ttfamily\tiny\color[gray]{0.3},
+  belowcaptionskip=\bigskipamount,
+  captionpos=b,
+  escapeinside={*'}{'*},
+  language=haskell,
+  tabsize=2,
+  emphstyle={\bf},
+  commentstyle=\it,
+  stringstyle=\mdseries\rmfamily,
+  showspaces=false,
+  keywordstyle=\bfseries\rmfamily,
+  columns=flexible,
+  basicstyle=\small\sffamily,
+  showstringspaces=false,
+  morecomment=[l]\%,
+}
+
 
 \title{A Tool-chain for Instruction Set Architecture Design}
 
@@ -98,7 +122,8 @@ our purpose (i.e. monad class).
 
 The article is organised as follows: Section \ref{sec:dsl} describes the framework
 we have developed, and how this can be used to interact with all the steps of the 
-design flow. Section \ref{sec:arm} presents a case-study: the ARMv6-M ISA. 
+design flow. Section \ref{sec:arm} presents a case-study: the ARMv6-M ISA and how this
+can be converted into a more readable representation via the CPOG. 
 And finally, Section \ref{sec:conclusion} summarises the achieved results, 
 outlining the future research directions.
 
@@ -166,7 +191,8 @@ abstraction which we have attempted to keep will allow us to bidirectionally con
 two representations.
 
 % Alex
-\subsection{Scalability of the framework}
+\subsection{Structure of the framework}
+\label{sec:struct}
 % Description of the microprogram file
 %  - how could be extended to fit the microprocessor model
 %  - basic functions which each processor implements
@@ -210,12 +236,17 @@ In addition to the set of internal registers usually contained in a generic proc
 this interface defines three more registers, which are always present in modern
 architectures: the program counter, the instruction register and the stack pointer.
 
+\textit{ISA\_model} is the module which the user is supposed to modify. This contains the
+actual instruction sets, composed by all the instructions. Based on the bottom layer, this
+module can be customised adding new special purpose registers, types for the ALU, as well as
+functions related to a particular instruction set. This will act as an interface for the
+software level simulation and it will be taken into account for the conversion towards other
+models (section \ref{sec:func}).
+
 \textit{Main} is the file where all the instructions can be executed over the
 processor modelled. That is where the software simulation takes place.
 Here, the user can write his own program, which will be simulated 
 and used to figure out the correct implementation of the instruction set.
-
-In figure \ref{fig:structure}, the whole structure of the framework is depicted, pinpointing on the interconnections between the modules described. 
 
 \begin{figure}[ht!]
 \begin{center}
@@ -224,6 +255,9 @@ In figure \ref{fig:structure}, the whole structure of the framework is depicted,
 	\label{fig:structure}
 \end{center}
 \end{figure}
+
+In figure \ref{fig:structure}, the whole structure of the framework is depicted, pinpointing 
+on the interconnections between the modules described. 
 
 In section \ref{sec:arm} we will show how this framework has been implemented and extended
 to model the ARMv6-M.
@@ -258,15 +292,6 @@ long. In the light of the above, formal specification can be converted into part
 a visual graph-based representation composed by nodes and arcs, by far more readable either
 than reference psuedo-code and Haskell statements.
 
-This allows the user to employ the tool-chain around the conditional partial order
-graphs. Either enabling the visual customisation of the dependencies of the instructions in 
-\verb|Workcraft|, as well as the usage of the built-in synthesis tools available. A fairly
-accurate measurement of the size of the final micro-controller for the processor control
-unit can be automatically derived then, allowing the designer to come back at the previous
-stage whether some of the requirements (area, power consumption) are not met.
-
-A clearer picture of the whole design-flow can be observed in figure \ref{fig:flow}.
-
 \begin{figure}[ht!]
 \begin{center}
 	\includegraphics[width=\linewidth]{IMG/flow.eps}
@@ -274,6 +299,15 @@ A clearer picture of the whole design-flow can be observed in figure \ref{fig:fl
 	\label{fig:flow}
 \end{center}
 \end{figure}
+
+This allows the user to employ the tool-chain around the conditional partial order
+graphs. Either enabling the visual customisation of the dependencies of the instructions in 
+\verb|Workcraft|, as well as the usage of the built-in synthesis tools available. A fairly
+accurate measurement of the size of the final microcontroller for the processor control
+unit can be automatically derived then, allowing the designer to come back at the previous
+stage whether some of the requirements (area, power consumption) are not met.
+
+A clearer picture of the whole design-flow can be observed in figure \ref{fig:flow}.
 
 %------------------------------------------------
 
@@ -284,13 +318,106 @@ A clearer picture of the whole design-flow can be observed in figure \ref{fig:fl
 
 % Paulius
 \subsection{ARMv6-M}
-% Description of the model
+% Description of the model in Haskell
 
 % Alex & Paulius
 \subsection{Towards a readable model}
 % Similarities between pseudo reference code and our model
 % Show Partial order examples derived by hand
 % Maybe an encoding example
+Going towards a more readable specification was one of our main goal. As discussed in section
+\ref{sec:intro} in fact, often instruction set architecture reference document are hard to
+read and fully understand. We believe that having a visual representation of the operations
+which occur inside each instruction would make the understanding easier, yet quicker. That is
+the main reason why we chose to adopt partial orders to represent the behaviour of
+instructions. Each instruction can be analysed singularly. The behaviour can be isolated,
+focusing on the causality of the operations which come in successions or in parallel.
+
+\begin{figure}[ht!]
+\begin{center}
+	\includegraphics[scale=0.5]{IMG/pos.eps}
+	\caption{Examples of sequential and concurrent behaviours.}
+	\label{fig:pos}
+\end{center}
+\end{figure}
+
+The capability of representing sequential and concurrent behaviours is instrumental for
+modelling instructions. Partial orders address this requirement with the usage of nodes
+($\bigcirc$) and dependencies ($\rightarrow$). Fig. \ref{fig:pos}(a) depicts a partial order
+where the three operations are executed sequentially. Fig. \ref{fig:pos}(b) instead shows
+four operations $\lbrace A,B,C,D \rbrace$ which can be executed with different orders. 
+$\lbrace A,B \rbrace$ and $\lbrace C,D \rbrace$ are concurrent paths \cite{andreyPhd}.
+
+In the light of the above, we are working on automating the conversion process from the
+Haskell-based specification to partial orders. The tool will be able to analyse the
+\textit{ISA\_module} file, capture the dependencies between the operations within each
+instruction and build a partial order. 
+
+Multiple level of abstraction can be chosen for the conversion. Units like the
+arithmetic logic unit can be intrinsically adopted for executing
+different operations: i.e. addition, multiplication, shift, etc. One might want to represent
+each single operation separately with a different node 
+(trading off some readability with accuracy), or raise the
+level of abstraction loosing the information about the ALU operation.
+
+\begin{figure}[ht!]
+\begin{center}
+	\includegraphics[width=\linewidth]{IMG/depPO.eps}
+	\caption{Allowed and not allowed conversions.}
+	\label{fig:depPO}
+\end{center}
+\end{figure}
+
+Another layer of abstraction which can be traded for readability is the partial
+representation of the data in the partial orders. This would allow a more accurate model
+which can be exploited to avoid inconsistent operations in the register file, or in the
+memory. For instance, let us assume that the register file has got two different input
+writing ports, which allows two different registers to be written at the same time. The tool
+should be able to figure out the destination of the ``writeRegister'' operation, in order to
+insert a dependency between two of these operations when the same destination is introduced
+(see Fig. \ref{fig:depPO}). The partial order in Fig. \ref{fig:depPO}(b) is not allowed
+because the two writing mechanism can be triggered at the same time, into the same location.
+A dependency should be insterted, as in the graph in Fig. \ref{fig:depPO}(c).
+
+For easier the understanding of the reader, an example will be showed. In the listing
+\ref{lis:and} the specification of the AND (register) instruction (ARMv6-M ISA
+\cite{armManual}) is depicted.
+
+\begin{lstlisting}[caption="AND (register) instruction - Haskell-based specification",
+frame=single, label=lis:and]
+and_RegT1 :: ARMv6_M m => Register m -> Register m 
+			 				 -> m ()
+and_RegT1 rm rdn = do
+    shifted <- alu (shlRegImm rm 0 apsr[29])
+    result <- alu (andRegImm rdn shifted)
+    writeRegister rdn result
+    updateN result[31]
+    updateZ result
+    updateC carry
+    incAndFetchInstruction
+\end{lstlisting}
+
+\noindent
+This instruction can be automatically translated into the partial order in figure
+\ref{fig:andPO}. Every statement of the specification univocally corresponds to a node in the
+graph. For instance, the one on sixth line correspond to the node named ``writeRegister''.
+The dependencies between the nodes are obtained by looking at the values which are needed for
+the execution of each operation. For instance, the second ALU operation needs the value
+called ``shifted'', computed during the first ALU operation. Therefore, the dependency
+between these two nodes is needed.
+
+\begin{figure}[ht!]
+\begin{center}
+	\includegraphics[width=\linewidth]{IMG/and_RegT1.eps}
+	\caption{AND (register) instruction - ARMv6-M (\cite{armManual}, p.116)}
+	\label{fig:andPO}
+\end{center}
+\end{figure}
+
+\noindent
+``incAndFetchInstruction'' is a basic operation defined inside the microprogram module (see
+section \ref{sec:struct}). This is composed by three sequential operations, which are in this
+case extracted and depicted in the partial order, for a more accurate modelling.
 
 %------------------------------------------------
 
@@ -303,7 +430,8 @@ A clearer picture of the whole design-flow can be observed in figure \ref{fig:fl
 \label{sec:frd}
 % future research direction
 
-\noindent\textbf{Acknowledgements:} The authors would like to thank Dr. Andrey Mokhov for helping with this work.
+\noindent\textbf{Acknowledgements:} The authors would like to thank Dr. Andrey Mokhov for
+helping with this work.
 
 %------------------------------------------------
 

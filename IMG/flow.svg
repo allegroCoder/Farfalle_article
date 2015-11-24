@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="flow.eps">
+   sodipodi:docname="flow.svg">
   <defs
      id="defs4">
     <marker
@@ -51,9 +51,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.959798"
-     inkscape:cx="316.76922"
-     inkscape:cy="654.81033"
+     inkscape:zoom="5.6"
+     inkscape:cx="222.17107"
+     inkscape:cy="657.71305"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -218,26 +218,20 @@
          x="433.3808"
          y="491.46301"
          style="font-weight:normal;-inkscape-font-specification:Serif">CPOG</tspan></text>
-    <path
-       style="fill:none;stroke:#000000;stroke-width:0.69999999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Lstart)"
-       d="m 197.24312,393.77762 c 0,0 8.99424,53.40318 62.70797,76.61131"
-       id="path6270"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc" />
     <text
        xml:space="preserve"
        style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Sans"
-       x="198.21397"
-       y="459.51471"
+       x="204.52742"
+       y="456.48425"
        id="text6456"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan6458"
-         x="199.80577"
-         y="459.51471">requirements </tspan><tspan
+         x="206.11922"
+         y="456.48425">requirements </tspan><tspan
          sodipodi:role="line"
-         x="198.21397"
-         y="472.01471"
+         x="204.52742"
+         y="468.98425"
          id="tspan6460">not satisfied</tspan></text>
     <path
        sodipodi:type="arc"
@@ -323,5 +317,11 @@
        sodipodi:ry="7.5"
        d="m 167.50001,419.14789 a 16.964285,7.5 0 1 1 -33.92857,0 16.964285,7.5 0 1 1 33.92857,0 z"
        transform="matrix(1.0656349,0,0,1.0656349,-8.2605657,-27.330981)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.69999999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Lstart)"
+       d="m 217.64052,393.96369 c 0,0 0.0107,1.25147 -0.0527,3.44762 -0.18375,6.36556 1.46947,21.07514 10.03329,36.11257 6.193,10.87444 16.36656,21.67696 32.43006,29.06706"
+       id="path3026"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cssc" />
   </g>
 </svg>
