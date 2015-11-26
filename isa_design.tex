@@ -51,7 +51,7 @@
 }
 
 
-\title{A Tool-chain for Instruction Set Architecture Design}
+\title{Towards a Systematic and Automated Approach in the Design of Processor Instruction Sets}
 
 \author{
 \IEEEauthorblockN{Alessandro de Gennaro}
@@ -69,7 +69,7 @@ Email: paulius.stankaitis@ncl.ac.uk}}
 \maketitle
 
 \begin{abstract}
-Adopting a systematic approach for the design of a processor instruction set is
+Adopting a systematic approach for the design of a processor instruction sets is
 instrumental for tackling the complexity, which rules most of modern processors.
 
 We present a tool-chain which follows the designer through all the phases of the
@@ -314,8 +314,61 @@ A clearer picture of the whole design-flow is depicted in Figure \ref{fig:flow}.
 % Introduction of ARMv6-M ISA
 
 % Paulius
-\subsection{ARMv6-M}
+\subsection{Features \& issues at the specification phase}
 % Description of the model in Haskell
+The faithfulness of ARMv6-M model with the reference specification was our main concern.
+We aimed at representing each instruction listed in the ISA document using the
+framework presented in this work, with the least loss of information. This required us to be
+as much consistent as possible with the manual, replicating the flow of the operations with
+the same order, as well as using the same names of the variables and functions at times.
+
+As far as the reference documents are concerned, instructions described in there tend to come
+up with a bare description. Hence, sometimes being completely accurate with 
+the source system is demanding, also because of the lack of technical information about the
+original architecture. This was the case for some of the functions such as DataMemoryBarrier,
+BkptInstrDebugEvent, Hint\_SendEvent, and so on \cite{armManual}.
+None of them are described in the reference manual, therefore these
+functions are considered to be executed atomically (by one single node). Obviously, this
+might not be the case and a deeper research with the producers of the core is needed to
+untangle these operations.
+
+Based on the structure described in Section \ref{sec:struct}, we built the model on top of
+the microprogram module. Therefore, many of the instructions characterised are supported by
+the methods present at the bottom layers. For instance, the operation
+\textit{incAndFetchInstruction} (depicted in the partial order in Fig. \ref{fig:andPO})
+consists in three sequential micro-operations: incrementing the program counter (PC)
+register, writing the result back into such a register and eventually moving the location of
+the memory pointed out by the PC into the instruction register (IR). This operation is
+executed at the end of nearly all the instructions, but the ones involving any branching
+mechanisms. Another example which can be analysed is the pop operation. This is in charge of
+decrementing/incrementing the stack pointer (SP) register (according to the internal
+architecture), and then fetching from the memory location addressed by the SP a chunk of 
+data. These two operations are used inside the main ISA architecture.
+
+Another part which is worth discussing about is the one related to the variety of the
+registers present inside the core. Each of them has got a different function which we have
+attempted to replicate as much as we could. In this case either, the purpose of each register
+is not described with much detail in the document. This partially limited the accuracy of the
+final model. Nonetheless, the high degree of abstraction we kept downsizes the importance of
+these problems. The registers present in our model are: linked register (LR), application
+program status register (APSR), interrupt program status register (IPSR), execution program
+status register (EPSR), the special-purpose mask register (also called PRIMASK), the special-purpose control register (CONTROL). They are needed to manage different internal functions.
+In our model, we limited at reading and writing them according to the reference description.
+
+Additionally, all the arithmetic, logical and bitwise operations are represented in our
+model. The lack of technical details is present also in this side, limiting the accuracy of
+the model. We assumed that all these kind of operations - shift, bitwise and, addition - are
+performed via a unit named arithmetic logic unit (ALU). Unfortunately, this is just an
+assumption, we are not sure for instance whether the shift operation is truly accomplished
+through such a unit or via another dedicated one (which will potentially increase the
+parallelism of the whole system). This problem does not interfere with our main purpose of
+developing a systematic approach though. Indeed, the designer of a system is expected to have
+such a technical knowledge, which can be employed to reach a high degree of faithfulness in
+the target model.
+
+Given this general introduction about the model, in the next section some of the instructions characterised in our representation will be showed, pinpointing at the high level of similarity with the instruction set we aimed at shaping.
+
+\subsection{Target model description}
 
 % Alex & Paulius
 \subsection{Towards readable specifications}
@@ -433,9 +486,10 @@ controller.
 \label{sec:conclusion}
 % Come up with some interesting conclusions
 
+
 \subsection{Future research directions}
 \label{sec:frd}
-% future research direction
+% Future research direction
 
 \noindent\textbf{Acknowledgements:} The authors would like to thank Dr. Andrey Mokhov for
 helping with this work.
