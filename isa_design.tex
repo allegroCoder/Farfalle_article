@@ -309,12 +309,13 @@ A clearer picture of the whole design-flow is depicted in Figure \ref{fig:flow}.
 %------------------------------------------------
 
 % Paulius
-\section{Case Study}
+\section{A case study: ARMv6-M}
 \label{sec:arm}
 % Introduction of ARMv6-M ISA
 
 % Alex
 \subsection{Features \& issues at the specification phase}
+\label{sec:feat}
 % Description of the model in Haskell
 The faithfulness of ARMv6-M model with the reference specification was our main concern.
 We aimed at representing each instruction listed in the ISA document using the
@@ -358,19 +359,148 @@ In our model, we limited at reading and writing them according to the reference 
 Additionally, all the arithmetic, logical and bitwise operations are represented in our
 model. The lack of technical details is present also in this side, limiting the accuracy of
 the model. We assumed that all these kind of operations - shift, bitwise and, addition - are
-performed via a unit named arithmetic logic unit (ALU). Unfortunately, this is just an
-assumption, we are not sure for instance whether the shift operation is truly accomplished
-through such a unit or via another dedicated one (which will potentially increase the
-parallelism of the whole system). This problem does not interfere with our main purpose of
+performed via the arithmetic logic unit (ALU). Unfortunately, this is just an
+assumption, we are not sure whether the shift operation is truly accomplished
+through such a unit  or via another dedicated one, for instance.
+This problem does not interfere with our main purpose of
 developing a systematic approach though. Indeed, the designer of a system is expected to have
 such a technical knowledge, which can be employed to reach a high degree of faithfulness in
 the target model.
 
-Given this general introduction about the model, in the next section some of the instructions characterised in our representation will be showed, pinpointing at the high level of similarity with the instruction set we aimed at shaping.
+Given this general introduction about the model, in the next section some of the instructions
+characterised in our representation will be showed, pinpointing at the high level of
+similarity with the instruction set that we aimed at shaping.
 
 % Alex
 \subsection{Target model description}
+All the instructions included in the ARMv6-M have been characterised in our representation.
+According to the reference manual description, the ARMv6-M is a subset of ARMv7-M and
+supports Thumb 16-bit instruction set, including a small number of 32-bit instructions
+introduced to the architecture as part of the Thumb-2 technology in ARMv6T2. 
 
+\begin{figure}[ht!]
+\begin{center}
+	\includegraphics[width=8.2cm]{IMG/encodings.eps}
+	\caption{ADD (immediate) instruction encodings - ARMv6-M (\cite{armManual}, p.107-108)}
+	\label{fig:ADDEnc}
+\end{center}
+\end{figure}
+
+Some of the instructions are associated to a couple of opcodes: named \textit{T1} and
+\textit{T2}. This provides a more flexible architecture, which in turn comes up with a
+flexible assembly language. This is the case for the \textit{ADD (immediate)} instruction,
+for instance. The first encoding associated to it is over seven bits, the rest of the
+instruction chunk is meant for hosting an immediate value (3-bit), and two more register
+locations (3-bit each): the source of the first operand and the destination of the result.
+The encoding \textit{T2} instead comes up with a quite different pattern. The opcode
+associated to it is over 5 bits, then there is a register (3-bit) which acts either as source
+of the first operand and the destination of the result; the remaining 8 bits contain a longer
+immediate value. Both of the encodings are depicted in Figure \ref{fig:ADDEnc}. These
+instructions can be used for different purposes. Because of time constraints, we focused just
+on the instructions with the encoding \textit{T1}. Nonetheless, we plan to represent the
+second encoding in future research, for a more consistent benchmark (see Section
+\ref{sec:frd}).
+
+The pseudocode specification of the instructions have been translated into the domain
+specific language (described in Section \ref{sec:dsl}). During the conversion process, we
+assumed that all the parameters which are involved in the internal operations are available
+and ready to be used. This is the case for the \textit{imm32} value, for instance, present in
+some of the instructions. This is over 32 bits, and is obtained extending the immediate value
+present inside the instruction, over 3, 5 or 8-bit long at times. We assumed to have a
+decoding function able to decode the instruction by the opcode. This is theoretically
+supposed to execute the right operations (such as the immediate extension) prior to the
+instruction execution.
+
+Let us focus on the pseudocode specification of the ADD (immediate) instruction (showed in
+Listing \ref{lis:add}). Three parameters are needed for this instruction: \textit{R[n]},
+\textit{R[d]} and imm32. \textit{setflags} is a flag always set to true for this instruction,
+therefore is not considered in our implementation.\\
+
+\begin{lstlisting}[caption=ADD (immediate) instruction - Reference specification,
+frame=single, label=lis:add]
+EncodingSpecificOperations();
+(result, carry, overflow) = AddWithCarry(R[n], imm32, '0');
+R[d] = result;
+if setflags then
+	APSR.N = result<31>;
+	APSR.Z = IsZeroBit(result);
+	APSR.C = carry;
+	APSR.V = overflow;
+\end{lstlisting}
+
+\noindent
+We can similarly characterise this instruction via the framework presented in this work,
+see Listing below.\\
+
+\begin{lstlisting}[caption=ADD (immediate) instruction - Haskell-based specification,
+frame=single, label=lis:addH]
+add_ImmT1 :: ARMv6_M m => Register m -> Register m
+							-> Value -> m ()
+add_ImmT1 rn rd imm32  = do
+    result <- alu (adcRegImm rn imm32 0)
+    writeRegister rd result
+    updateN result
+    updateZ result
+    updateC
+    updateV
+    incAndFetchInstruction
+\end{lstlisting}
+
+\noindent
+The instructions takes in input two registers and an immediate value over 32 bits. According
+to the reference document, the procedure \textit{EncodingSpecificOperation()} is the one in
+charge of performing the right operations depending on the encoding read. As already
+mentioned, we assume this step to be already performed prior to instruction execution. All
+the other statements are quite similar to the source counterparts, and do not need an
+explanation. The only thing worth mentioning is that the alu operation is in charge of
+setting the carry and the overflow bits internally. That is the reason why those two are not
+present in the Haskell implementation. The \textit{IsZeroBit()} procedure simply checks if a
+value is 0, this is implemented inside the function \textit{updateZ}. At the end of the
+Haskell specification is present the \textit{incAndFetchInstruction}, which is in charge of
+updating the program counter register and fetching the next instruction.
+
+Another instruction which might be of interest to the reader is the store, also known as STR
+(register). This instruction compute the address, where to store a chunk of data, from a base
+address and an offset, both defined into two registers. Although the offset can be optionally
+shifted in a general ISA architecture, this feature has not been implemented in the ARMv6-M.
+The \textit{shift\_n} variable in fact, which is supposed to contain the number of bits that
+the register \textit{R[m]} must be shifted by, is always set to 0. Below the source
+specification is showed:\\
+
+\begin{lstlisting}[caption=STR (register) instruction - Reference specification,
+frame=single, label=lis:str]
+EncodingSpecificOperations();
+offset = Shift(R[m], shift_t, shift_n, APSR.C);
+address = R[n] + offset;
+MemU[address,4] = R[t];
+\end{lstlisting}
+
+\noindent
+The specification based on the Haskell framework is listed in Listing \ref{lis:strH}.
+According to the source description, this instruction takes in input three registers.
+\textit{rn} contains the base address, \textit{rm} the optionally shifted offset (shifted by
+0 bits in this implementation), and \textit{rt} that contains the data chunk to be stored
+into the memory location pointed by the final result, eventually placed in the variable
+\textit{address}. The arithmetic logic unit is in charge of performing either the shift and
+the addition, as described in Section \ref{sec:feat}. \textit{writeMemory} is one of the
+procedure implemented in the module basics (see Section \ref{sec:struct}). \textit{readBit}
+procedure, simply returns the bit 29, where the carry flag is stored.\\
+
+\begin{lstlisting}[caption=STR (register) instruction - Haskell-based specification,
+frame=single, label=lis:strH]
+str_RegT1 :: ARMv6_M m => Register m -> Register m
+						 -> Register m -> m ()
+str_RegT1 rm rn rt = do
+    offset <- alu (shlRegImm rm 0 (readBit apsr 29))
+    address <- alu (adcRegImm rn offset 0)
+    writeMemory address rt
+    incAndFetchInstruction
+\end{lstlisting}
+
+The two Haskell-based specifications showed along this section are fairly similar to the
+reference pseudocode. The degree of precision the designer can go for depends on the degree
+of accuracy the source specification have been characterised with. There has not been loss of
+information in the conversion process.
 
 % Alex
 \subsection{Towards readable specifications}
@@ -436,7 +566,7 @@ For easier the understanding of the reader, an example will be showed. In the Li
 \ref{lis:and} the specification of the AND (register) instruction (ARMv6-M ISA
 \cite{armManual}) is depicted.\\
 
-\begin{lstlisting}[caption="AND (register) instruction - Haskell-based specification",
+\begin{lstlisting}[caption=AND (register) instruction - Haskell-based specification,
 frame=single, label=lis:and]
 and_RegT1 :: ARMv6_M m => Register m -> Register m 
 			 				 -> m ()
@@ -476,6 +606,37 @@ clearly expressed via arcs. In addition, the graph-based model provides a good d
 of fidelity; combined with the code-based specification it can lead to a good tradeoff
 between readability and accuracy.
 
+Another example which might be of interest discussing about is the unconditional branch. This
+instruction simply causes a branch to a target address. The Haskell-based specification is
+depicted below:\\
+
+\begin{lstlisting}[caption=B instruction - Haskell-based specification,
+frame=single, label=lis:and]
+b :: ARMv6_M m => m ()
+b imm32 = do
+    nextInstrLocation <- alu (adcRegImm pc imm32 0)
+    writeRegister pc nextInstrLocation
+    readMemory nextInstrLocation ir
+\end{lstlisting}
+
+\noindent
+The particularity of this instruction is the lack of the incAndFetchInstruction procedure.
+The new instruction register indeed is obtained by the address computed internally, adding an
+32-bit immediate address with the current program counter register. In Figure \ref{fig:bPO}
+the partial order associate to the branch instruction is showed. Reader should notice that
+there is not a direct dependency between the \textit{writeReg} and the \textit{readmemory}
+nodes. Nonetheless, a dependency has been inserted in order to fetch the new instruction once
+that the PC register has been updated. This might be named a \textit{functional dependency}
+and is implicit to the incAndFetchInstruction procedure either.
+
+\begin{figure}[ht!]
+\begin{center}
+	\includegraphics[width=8.7cm]{IMG/b.eps}
+	\caption{B instruction - ARMv6-M (\cite{armManual}, p.119)}
+	\label{fig:bPO}
+\end{center}
+\end{figure}
+
 We did not have the time yet to implement the tool for the conversion.
 The example showed along this section has been obtained by hand. Therefore, we reserve for a
 future article the results and considerations related to the synthesis of the final
@@ -483,15 +644,41 @@ controller.
 
 %------------------------------------------------
 
-% Alex & Paulius
+% Alex
 \section{Conclusion}
 \label{sec:conclusion}
 % Come up with some interesting conclusions
+This work represents the first step towards a formal and yet readable specification of
+processor instruction sets. We demonstrated how the specification of a real ISA, which has
+been embedded into the \verb|ARM Cortex-M0|, can be specified via our framework without
+loosing any information and lowering the accuracy of the representation.
 
+In addition, we showed how such a framework can be converted into a visual-based
+representation with different tradeoffs for maximising either the readability or the accuracy
+of the graph model. The latter, based on the Conditional Partial Order Graph, can exploit a
+built-in tool-chain embedded in \verb|Workcraft| for visualisation and hardware synthesis
+purpose. In particular, this representation aims at simplifying the understanding of the
+processor instruction sets.
 
+%Alex
 \subsection{Future research directions}
 \label{sec:frd}
 % Future research direction
+Much research can be carried on about the work presented. First of all we will expand the
+framework developed, providing some procedures to capture the internal instruction
+dependencies, automatically deriving a partial order according to the level of abstraction
+chosen by the user. This will be used to move from the DSL - Haskell framework, into the CPOG
+representation (see Fig. \ref{fig:flow}), avoiding likely human errors. In turn, this will
+allow us to derive the hardware microcontroller and make a consistent comparison (in terms of
+area, power consumption, latency, etc.) with the one which the ARM Cortex-M0 embeds.
+
+Secondly, we will work on a plugin to automatically convert the specification into the
+vent-B language. This will allow the usage of sound theorem provers for the formal
+verification of the ISA, an extremely useful instrument which designers might benefit from.
+
+From the point of view of the case study itself. The model will be expanded including the
+\textit{T2} encodings. Other case studies will be taken into account, such as the instruction
+sets embedded in the Texas Instruments MSP430 and the Intel 8051.\\
 
 \noindent\textbf{Acknowledgements:} The authors would like to thank Dr. Andrey Mokhov for
 helping with this work.
