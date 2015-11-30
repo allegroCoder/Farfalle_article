@@ -162,6 +162,13 @@ Cortex-A8 processor. An additional example of how an ISA might be specified insi
 a tool is present in \cite{isaXml}. Both the modules and the instructions here are
 introduced via a xml-based language, fairly readable but not very flexible.
 
+In this work we aim at developing a Domain Specific Language based on Haskell. This will be
+adopted for the representation of the ARMv6-M, used as the case study. The target
+representation abstracts some details such as the bit-length of the registers or immediate
+values. The goal is the integration of the framework presented in Section \ref{sec:struct}
+into a systematic design flow (Section \ref{sec:func}), while easier the understanding of
+a processor instruction set with a graph-based model (Section \ref{sec:read}).
+
 %------------------------------------------------
 
 % Alex
@@ -214,9 +221,10 @@ special purpose register, or using the pattern $R \; Int$ (i.e. $R \; 5$, to poi
 fifth location of the register file). Memory is accessed via an integer type address instead.
 Also immediate values are internally seen as integers. This approach is not
 accurate. Some of the features - the bit length of the registers, or the
-endianness of the data - are lost. Nonetheless, we aim at keeping a high degree of
-abstraction, needed to interpret the model from several point of views (see Section
-\ref{sec:func}).
+endianness of the data - are lost. Nonetheless, we aim at raising the level of abstraction of
+the framework, in order to allow us and other researchers to interpret the model from
+several point of views (see Section \ref{sec:func}).
+
 Finally, ComputationType is defined. This is a flexible type in input to the
 arithmetic logic unit (ALU), which can be modified according to the ISA
 needs. As far as this unit is concerned in fact, different combinations of inputs can be
@@ -239,7 +247,7 @@ module can be customised adding new special purpose registers and types for the 
 Most important, this will contain all the instructions one wants to include in a custom ISA. This will act as an interface for the software level simulation and will be taken into
 account for the conversion towards other models and languages (Section \ref{sec:func}).
 
-\textit{Main} is the module meant to the high-level software simulation, in here
+\textit{Main} is the module meant for the high-level software simulation, in here
 all the instructions can be executed over the processor modelled. This might be useful
 for having a first proof of a consistent architecture. The possible implementation errors
 indeed, can be captured analysing the behaviour of the whole system.
@@ -253,7 +261,9 @@ indeed, can be captured analysing the behaviour of the whole system.
 \end{figure}
 
 In Figure \ref{fig:structure}, the whole structure of the framework is depicted, pinpointing 
-on the interconnections between the modules described. 
+on the interconnections between the modules described. The whole structure is rather simple
+and small, and can be potentially extended with new procedures and types. This is what makes
+this approach flexible and scalable.
 
 In Section \ref{sec:arm} we will show how this framework has been implemented and extended
 to model the ARMv6-M.
@@ -323,9 +333,9 @@ framework presented in this work, with the least loss of information. This requi
 as much consistent as possible with the manual, replicating the flow of the operations with
 the same order, as well as using the same names of the variables and functions at times.
 
-As far as the reference documents are concerned, instructions described in there tend to come
-up with a bare description. Hence, sometimes being completely accurate with 
-the source system is demanding, also because of the lack of technical information about the
+As far as the reference documents are concerned, instructions characterised in there tend to
+come up with a bare description. Hence, sometimes being completely accurate with 
+the source system is complex, also because of the lack of technical information about the
 original architecture. This was the case for some of the functions such as DataMemoryBarrier,
 BkptInstrDebugEvent, Hint\_SendEvent, and so on \cite{armManual}.
 None of them are described in the reference manual, therefore these
@@ -504,6 +514,7 @@ information in the conversion process.
 
 % Alex
 \subsection{Towards readable specifications}
+\label{sec:read}
 % Similarities between pseudo reference code and our model
 % Show Partial order examples derived by hand
 % Maybe an encoding example
@@ -569,7 +580,7 @@ For easier the understanding of the reader, an example will be showed. In the Li
 \begin{lstlisting}[caption=AND (register) instruction - Haskell-based specification,
 frame=single, label=lis:and]
 and_RegT1 :: ARMv6_M m => Register m -> Register m 
-			 				 -> m ()
+			 				-> m ()
 and_RegT1 rm rdn = do
     shifted <- alu (shlRegImm rm 0 apsr[29])
     result <- alu (andRegImm rdn shifted)
@@ -651,14 +662,18 @@ controller.
 This work represents the first step towards a formal and yet readable specification of
 processor instruction sets. We demonstrated how the specification of a real ISA, which has
 been embedded into the \verb|ARM Cortex-M0|, can be specified via our framework without
-loosing any information and lowering the accuracy of the representation.
+loosing any information or lowering the accuracy of the representation.
 
 In addition, we showed how such a framework can be converted into a visual-based
 representation with different tradeoffs for maximising either the readability or the accuracy
-of the graph model. The latter, based on the Conditional Partial Order Graph, can exploit a
-built-in tool-chain embedded in \verb|Workcraft| for visualisation and hardware synthesis
-purpose. In particular, this representation aims at simplifying the understanding of the
-processor instruction sets.
+of the graph-based model. The latter, based on the Conditional Partial Order Graph, can
+exploit a built-in tool-chain embedded in \verb|Workcraft| for visualisation and hardware
+synthesis purpose. In particular, this representation aims at simplifying the understanding of
+the processor instruction sets.
+
+This open-source framework opens the path towards different other languages and tools which
+can be adopted in the design flow. Event-B might be one of this piece of a puzzle which we
+hope to be able to complete, together with the whole community in this field.
 
 %Alex
 \subsection{Future research directions}
@@ -678,7 +693,11 @@ verification of the ISA, an extremely useful instrument which designers might be
 
 From the point of view of the case study itself. The model will be expanded including the
 \textit{T2} encodings. Other case studies will be taken into account, such as the instruction
-sets embedded in the Texas Instruments MSP430 and the Intel 8051.\\
+sets embedded in the Texas Instruments MSP430 and the Intel 8051. As is pointed out in
+\cite{webArticle}, nowadays there are quite a few architectures with a relevant market size -
+by ARM, ARC, Xtensa, MIPS. Unit volumes are progressively increasing, hence we believe the
+need for modelling and experimenting by these companies will do so. Eventually, designers and
+end users will benefit from a systematic approach to the design of processor instruction sets.\\
 
 \noindent\textbf{Acknowledgements:} The authors would like to thank Dr. Andrey Mokhov for
 helping with this work.
@@ -750,6 +769,11 @@ helping with this work.
 \bibitem{eventB}
 	C. Métayer, J.-R. Abrial, L. Voisin. \emph{``Event-B Language''}. 
 	Project IST-511599. $31^{st}$ May 2005
+	
+\bibitem{webArticle}
+	Jim Turley. \emph{``CPUs Get Cheaper; Transistors Get More Expensive''}. Electronic
+	Engineering Journal: \url{http://www.eejournal.com/archives/articles/20151104-synopsys}.
+	November 4, 2015
 	
 \end{thebibliography}
 
