@@ -193,7 +193,12 @@ $$P(Regs, Mem) \Rightarrow P'(Regs, Mem)$$
 evolves into a new state $P'$ different from the previous one. Where either the registers and
 the memory might be different. This approach is relatively similar to the processor
 description in \cite{isaFunc}. Therefore, we are confident that the high degree of
-abstraction obtained will allow to bidirectionally connect these two representations.
+abstraction obtained will allow the bidirectional connection of these two representations.
+
+This section is organised as follow: Section \ref{sec:struct} describes the structure of the
+framework. A characterization of the design flow derived by this approach is presented in
+Section \ref{sec:func}, while a brief description of the verification side, related to Event-B
+interpretation, is discussed in Section \ref{sec:ver}.
 
 % Alex
 \subsection{Structure of the framework}
@@ -218,19 +223,19 @@ Furthermore, the types used in the structure are defined.
 The registers and the memory are internally implemented with two maps of integer values.
 The former can be accessed either via the name of a
 special purpose register, or using the pattern $R \; Int$ (i.e. $R \; 5$, to point out the
-fifth location of the register file). Memory is accessed via an integer type address instead.
-Also immediate values are internally seen as integers. This approach is not
+fifth location in the register file). Memory is accessed via an integer type address instead.
+Immediate values are also internally seen as integers. This approach is not
 accurate. Some of the features - the bit length of the registers, or the
-endianness of the data - are lost. Nonetheless, we aim at raising the level of abstraction of
-the framework, in order to allow us and other researchers to interpret the model from
-several point of views (see Section \ref{sec:func}).
+endianness of the data - are lost. Nonetheless, the high level of abstraction of
+the framework allows the interpretation of the model from several point of view (see Section
+\ref{sec:func}).
 
 Finally, ComputationType is defined. This is a flexible type in input to the
 arithmetic logic unit (ALU), which can be modified according to the ISA
 needs. As far as this unit is concerned in fact, different combinations of inputs can be
 given to it: one single register for an increment/decrement operation, either two 
 registers, or one register and an immediate for an ADD/SUB/MUL operation, and so on.
-That is the main reason why this type needs to be scalable.
+That is the main reason of the scalability of this type.
 
 \textit{Microprogram} is the interface based on the low-level module just described.
 In this, just a few operations, always present in a general purpose processor, are
@@ -243,14 +248,14 @@ the stack pointer.
 
 \textit{ISA\_model} is the module where the user is supposed to introduce the custom 
 instruction set architecture. Based on the bottom layers, this
-module can be customised adding new special purpose registers and types for the ALU.
+module can be customised adding other special purpose registers and types for the ALU.
 Most important, this will contain all the instructions one wants to include in a custom ISA. This will act as an interface for the software level simulation and will be taken into
 account for the conversion towards other models and languages (Section \ref{sec:func}).
 
 \textit{Main} is the module meant for the high-level software simulation, in here
 all the instructions can be executed over the processor modelled. This might be useful
-for having a first proof of a consistent architecture. The possible implementation errors
-indeed, can be captured analysing the behaviour of the whole system.
+for having a first proof of a consistent architecture. Indeed, the possible implementation
+errors can be captured analysing the behaviour of the whole system.
 
 \begin{figure}[ht!]
 \begin{center}
@@ -260,9 +265,9 @@ indeed, can be captured analysing the behaviour of the whole system.
 \end{center}
 \end{figure}
 
-In Figure \ref{fig:structure}, the whole structure of the framework is depicted, pinpointing 
-on the interconnections between the modules described. The whole structure is rather simple
-and small, and can be potentially extended with new procedures and types. This is what makes
+In Figure \ref{fig:structure}, the structure of the framework is depicted, pinpointing 
+on the interconnections between the modules described. The structure is rather simple
+and small, and can be potentially extended with new procedures and types, making
 this approach flexible and scalable.
 
 In Section \ref{sec:arm} we will show how this framework has been implemented and extended
@@ -286,7 +291,7 @@ formal technique used to analyse the model at the system level. It comes with so
 provers which are able to verify the consistency of the system, proving that there are 
 no inconsistencies between instructions. This is an interesting feature itself, which could
 be particularly useful when applied to instruction sets. It falls within the side of the
-formal \textit{verification}.
+formal \textit{verification} (see Section \ref{sec:ver} for a detailed description).
 
 \textit{Visualisation} and \textit{synthesis} are two other
 interpretations which can be given to this framework, somehow connected to each other via
@@ -318,6 +323,7 @@ A clearer picture of the whole design-flow is depicted in Figure \ref{fig:flow}.
 
 %Paulius
 \subsection{Verification with Event-B}
+\label{sec:ver}
 %------------------------------------------------
 Design validation process is instrumental for any kind of system. A typical system design
 process requires numerous minor optimization modifications. The system needs to be 
@@ -380,8 +386,8 @@ invariants hold after event.
 % Description of the model in Haskell
 The faithfulness of ARMv6-M model with the reference specification was our main concern.
 We aimed at representing each instruction listed in the ISA document using the
-framework presented in this work, with the least loss of information. This required us to be
-as much consistent as possible with the manual, replicating the flow of the operations with
+framework presented in this work, with the least loss of information. This required to be
+as consistent as possible with the manual, replicating the flow of the operations with
 the same order, as well as using the same names of the variables and functions at times.
 
 As far as the reference documents are concerned, instructions characterised in there tend to
@@ -398,18 +404,18 @@ Based on the structure described in Section \ref{sec:struct}, we built the model
 the microprogram module. Therefore, many of the instructions characterised are supported by
 the methods present at the bottom layers. For instance, the operation
 \textit{incAndFetchInstruction} (depicted in the partial order in Fig. \ref{fig:andPO})
-consists in three sequential micro-operations: incrementing the program counter (PC)
+consists of three sequential micro-operations: incrementing the program counter (PC)
 register, writing the result back into such a register and eventually moving the location of
 the memory pointed out by the PC into the instruction register (IR). This operation is
 executed at the end of nearly all the instructions, but the ones involving any branching
 mechanisms. Another example which can be analysed is the pop operation. This is in charge of
 decrementing/incrementing the stack pointer (SP) register (according to the internal
 architecture), and then fetching from the memory location addressed by the SP a chunk of 
-data. These two operations are used inside the main ISA architecture.
+data. These two operations are used inside the main instruction set architecture.
 
-Another part which is worth discussing about is the one related to the variety of the
+Another part which is worth discussing is the one related to the variety of the
 registers present inside the core. Each of them has got a different function which we have
-attempted to replicate as much as we could. In this case either, the purpose of each register
+attempted to replicate as much as we could. In this case, the purpose of each register
 is not described with much detail in the document. This partially limited the accuracy of the
 final model. Nonetheless, the high degree of abstraction we kept downsizes the importance of
 these problems. The registers present in our model are: linked register (LR), application
@@ -419,10 +425,10 @@ In our model, we limited at reading and writing them according to the reference 
 
 Additionally, all the arithmetic, logical and bitwise operations are represented in our
 model. The lack of technical details is present also in this side, limiting the accuracy of
-the model. We assumed that all these kind of operations - shift, bitwise and, addition - are
+the model. We assumed that all these kind of operations are
 performed via the arithmetic logic unit (ALU). Unfortunately, this is just an
 assumption, we are not sure whether the shift operation is truly accomplished
-through such a unit  or via another dedicated one, for instance.
+through such a unit or via another dedicated one, for instance.
 This problem does not interfere with our main purpose of
 developing a systematic approach though. Indeed, the designer of a system is expected to have
 such a technical knowledge, which can be employed to reach a high degree of faithfulness in
@@ -447,8 +453,8 @@ introduced to the architecture as part of the Thumb-2 technology in ARMv6T2.
 \end{center}
 \end{figure}
 
-Some of the instructions are associated to a couple of opcodes: named \textit{T1} and
-\textit{T2}. This provides a more flexible architecture, which in turn comes up with a
+Some of the instructions are associated to a couple of opcodes: named T1 and
+T2. This provides a more flexible architecture, which in turn comes up with a
 flexible assembly language. This is the case for the \textit{ADD (immediate)} instruction,
 for instance. The first encoding associated to it is over seven bits, the rest of the
 instruction chunk is meant for hosting an immediate value (3-bit), and two more register
@@ -458,7 +464,7 @@ associated to it is over 5 bits, then there is a register (3-bit) which acts eit
 of the first operand and the destination of the result; the remaining 8 bits contain a longer
 immediate value. Both of the encodings are depicted in Figure \ref{fig:ADDEnc}. These
 instructions can be used for different purposes. Because of time constraints, we focused just
-on the instructions with the encoding \textit{T1}. Nonetheless, we plan to represent the
+on the instructions with the encoding T1. Nonetheless, we plan to represent the
 second encoding in future research, for a more consistent benchmark (see Section
 \ref{sec:frd}).
 
@@ -511,9 +517,9 @@ add_ImmT1 rn rd imm32  = do
 The instructions takes in input two registers and an immediate value over 32 bits. According
 to the reference document, the procedure \textit{EncodingSpecificOperation()} is the one in
 charge of performing the right operations depending on the encoding read. As already
-mentioned, we assume this step to be already performed prior to instruction execution. All
-the other statements are quite similar to the source counterparts, and do not need an
-explanation. The only thing worth mentioning is that the alu operation is in charge of
+mentioned, we assume this step to be already performed beforehand to instruction execution.
+All the other statements are quite similar to the source counterparts.
+The only thing worth mentioning is that the alu operation is in charge of
 setting the carry and the overflow bits internally. That is the reason why those two are not
 present in the Haskell implementation. The \textit{IsZeroBit()} procedure simply checks if a
 value is 0, this is implemented inside the function \textit{updateZ}. At the end of the
@@ -521,7 +527,7 @@ Haskell specification is present the \textit{incAndFetchInstruction}, which is i
 updating the program counter register and fetching the next instruction.
 
 Another instruction which might be of interest to the reader is the store, also known as STR
-(register). This instruction compute the address, where to store a chunk of data, from a base
+(register). This instruction computes the address where to store a chunk of data, from a base
 address and an offset, both defined into two registers. Although the offset can be optionally
 shifted in a general ISA architecture, this feature has not been implemented in the ARMv6-M.
 The \textit{shift\_n} variable in fact, which is supposed to contain the number of bits that
@@ -559,8 +565,8 @@ str_RegT1 rm rn rt = do
 \end{lstlisting}
 
 The two Haskell-based specifications showed along this section are fairly similar to the
-reference pseudocode. The degree of precision the designer can go for depends on the degree
-of accuracy the source specification have been characterised with. There has not been loss of
+reference pseudocode. The degree of precision the designer can go for depends on the accuracy
+the source specification have been characterised with. There has not been loss of
 information in the conversion process.
 
 % Alex
@@ -570,12 +576,12 @@ information in the conversion process.
 % Show Partial order examples derived by hand
 % Maybe an encoding example
 Going towards a more readable specification was one of our main goal. As discussed in Section
-\ref{sec:intro} in fact, often instruction set architecture reference document are hard to
+\ref{sec:intro} in fact, often instruction set architecture reference documents are hard to
 read and fully understand. We believe that having a visual representation of the operations
 which occur inside each instruction would make the understanding easier, yet quicker. That is
 the main reason why we chose to adopt partial orders to represent the behaviour of
 instructions. Each instruction can be analysed singularly. The behaviour can be isolated,
-focusing on the causality of the operations to perform.
+focusing on the causality of the operations to execute.
 
 \begin{figure}[ht!]
 \begin{center}
@@ -590,7 +596,7 @@ modelling instructions. Partial orders address this requirement with the usage o
 ($\bigcirc$) and dependencies ($\rightarrow$). Fig. \ref{fig:pos}(a) depicts a partial order
 where the three operations are executed sequentially. Fig. \ref{fig:pos}(b) instead shows
 four operations $\lbrace A,B,C,D \rbrace$ which can be executed with different orders. 
-$\lbrace A,B \rbrace$ and $\lbrace C,D \rbrace$ are concurrent paths. A detail
+$\lbrace A,B \rbrace$ and $\lbrace C,D \rbrace$ are concurrent paths. A detailed
 description can be found in \cite{andreyPhd}.
 
 In the light of the above, we are working on automating the conversion process from the
