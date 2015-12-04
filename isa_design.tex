@@ -319,14 +319,37 @@ A clearer picture of the whole design-flow is depicted in Figure \ref{fig:flow}.
 %Paulius
 \subsection{Verification with Event-B}
 %------------------------------------------------
-Design validation process is instrumental for any kind of system. A typical system design process requires numerous minor optimization modifications. The system needs to be re-validated after each refinement step, making this phase not particularly cost and time effective. Applying formal techniques is a complex task, which requires a deep mathematical understanding and rigorous analysis of the system. Furthermore, training domain specific engineers to mathematical techniques can be very expensive. Therefore, our approach will include methods and tool support, which intends to hide mathematical complexity by automating validation process. 
+Design validation process is instrumental for any kind of system. A typical system design
+process requires numerous minor optimization modifications. The system needs to be 
+re-validated after each refinement step, making this phase not particularly cost and time
+effective. Applying formal techniques is a complex task, which requires a deep mathematical
+understanding and rigorous analysis of the system. Furthermore, training domain specific
+engineers to mathematical techniques can be very expensive. Therefore, our approach will
+include methods and tool support, which intends to hide mathematical complexity by automating
+validation process. 
 
 % Specification of Model%
-Event-B, originated from well known formalism called B method, is one of the most used specification languages in safety critical software development area. Over the years, Event-B proved to be successful mainly due to a few large academic research projects. Nowadays, this is commonly used in industry. Excellent tool support and proof driven process were key aspects which led us to choose this particular method.
+Event-B, originated from well known formalism called B method, is one of the most used
+specification languages in safety critical software development area. Over the years, Event-B
+proved to be successful mainly due to a few large academic research projects. Nowadays, this
+is commonly used in industry. Excellent tool support and proof driven process were key aspects
+which led us to choose this particular method.
 
-The formalism is based on First Order Logic and Zermelo-Fraenkel set theory. This is a relatively high-level language, although very expressive. System specification is the initial step in formal validation and it starts with describing requirements for the design. System requirements should completely cover functionality and environment of the design. Next stage is represented by the system development. Here, the model is developed: starting with the most abstract model, this is gradually refined broadening the level of granularity.
+The formalism is based on First Order Logic and Zermelo-Fraenkel set theory. This is a
+relatively high-level language, although very expressive. System specification is the initial
+step in formal validation and it starts with describing requirements for the design. System
+requirements should completely cover functionality and environment of the design. Next stage
+is represented by the system development. Here, the model is developed: starting with the most
+abstract model, this is gradually refined broadening the level of granularity.
 
-Formal verification is a another major branch of formal modelling. After that the system is specified and abstracted, its conditions need to be rigorously proved. Model is considered correct if and only if all conditions, also known as \textit{proof obligations}, are satisfied. Beforehand, designer is required to define invariants of the system , which need to hold as system progress. In Event-B these conditions are used to construct verification conditions for Invariant Preservation Rule. There are few of these rules, but the most important are Invariant Preservation Rule, Deadlock Freedom Rule and also satisfaction of refinement obligation. These set of rules just indicates what needs to be proven.
+Formal verification is a another major branch of formal modelling. After that the system is
+specified and abstracted, its conditions need to be rigorously proved. Model is considered
+correct if and only if all conditions, also known as \textit{proof obligations}, are
+satisfied. Beforehand, designer is required to define invariants of the system , which need to
+hold as system progress. In Event-B these conditions are used to construct verification
+conditions for Invariant Preservation Rule. There are few of these rules, but the most
+important are Invariant Preservation Rule, Deadlock Freedom Rule and also satisfaction of
+refinement obligation. These set of rules just indicates what needs to be proven.
 
 \begin{figure}[ht!]
 \begin{center}
@@ -340,7 +363,9 @@ Formal verification is a another major branch of formal modelling. After that th
 \end{center}
 \end{figure}
 
-In Figure \ref{fig:eveB}, sequent of Invariant Preservation Rule is stated, where hypothesis consists of axioms, invariants and guards of the events. The goal is to validate whether invariants hold after event.
+In Figure \ref{fig:eveB}, sequent of Invariant Preservation Rule is stated, where hypothesis
+consists of axioms, invariants and guards of the events. The goal is to validate whether
+invariants hold after event.
 
 %------------------------------------------------
 
