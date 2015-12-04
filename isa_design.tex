@@ -249,7 +249,8 @@ the stack pointer.
 \textit{ISA\_model} is the module where the user is supposed to introduce the custom 
 instruction set architecture. Based on the bottom layers, this
 module can be customised adding other special purpose registers and types for the ALU.
-Most important, this will contain all the instructions one wants to include in a custom ISA. This will act as an interface for the software level simulation and will be taken into
+Most important, this will contain all the instructions one wants to include in a custom ISA.
+This will act as an interface for the software level simulation and will be taken into
 account for the conversion towards other models and languages (Section \ref{sec:func}).
 
 \textit{Main} is the module meant for the high-level software simulation, in here
@@ -380,7 +381,15 @@ invariants hold after event.
 \label{sec:arm}
 % Introduction of ARMv6-M ISA
 
-Case study section intends to demonstrate potential of our domain specific language by analysing ARM Cortex M0+ microprocessor's instruction set. This section starts with a brief description of the ARMv6-M instruction set and information we used to construct our model (Section \ref{sec:feat}). Further, concrete example of translated instruction to is demonstrated together with visual graph representation (Sections \ref{sec:mod} and \ref{sec:read}). As the basis for our experiment, we used microprocessor manual \cite{armManual}, which includes short descriptions of each instruction as well as functionality pseudocode and encodings. We used this information to build an instruction set model of this specific microprocessor. 
+Case study section intends to demonstrate potential of our domain specific language by
+analysing ARM Cortex M0+ microprocessor's instruction set. This section starts with a brief
+description of the ARMv6-M instruction set and information we used to construct our model
+(Section \ref{sec:feat}). Further, concrete example of translated instruction to is
+demonstrated together with visual graph representation (Sections \ref{sec:mod} and
+\ref{sec:read}). As the basis for our experiment, we used microprocessor manual
+\cite{armManual}, which includes short descriptions of each instruction as well as
+functionality pseudocode and encodings. We used this information to build an instruction set
+model of this specific microprocessor. 
 
 % Alex
 \subsection{Features \& issues at the specification phase}
@@ -422,8 +431,10 @@ is not described with much detail in the document. This partially limited the ac
 final model. Nonetheless, the high degree of abstraction we kept downsizes the importance of
 these problems. The registers present in our model are: linked register (LR), application
 program status register (APSR), interrupt program status register (IPSR), execution program
-status register (EPSR), the special-purpose mask register (also called PRIMASK), the special-purpose control register (CONTROL). They are needed to manage different internal functions.
-In our model, we limited at reading and writing them according to the reference description.
+status register (EPSR), the special-purpose mask register (also called PRIMASK), the 
+pecial-purpose control register (CONTROL). They are needed to manage different internal
+functions. In our model, we limited at reading and writing them according to the reference
+description.
 
 Additionally, all the arithmetic, logical and bitwise operations are represented in our
 model. The lack of technical details is present also in this side, limiting the accuracy of
