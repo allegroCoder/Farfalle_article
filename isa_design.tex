@@ -380,6 +380,8 @@ invariants hold after event.
 \label{sec:arm}
 % Introduction of ARMv6-M ISA
 
+Case study section intends to demonstrate potential of our domain specific language by analysing ARM Cortex M0+ microprocessor's instruction set. This section starts with a brief description of the ARMv6-M instruction set and information we used to construct our model (Section \ref{sec:feat}). Further, concrete example of translated instruction to is demonstrated together with visual graph representation (Sections \ref{sec:mod} and \ref{sec:read}). As the basis for our experiment, we used microprocessor manual \cite{armManual}, which includes short descriptions of each instruction as well as functionality pseudocode and encodings. We used this information to build an instruction set model of this specific microprocessor. 
+
 % Alex
 \subsection{Features \& issues at the specification phase}
 \label{sec:feat}
@@ -440,6 +442,7 @@ similarity with the instruction set that we aimed at shaping.
 
 % Alex
 \subsection{Target model description}
+\label{sec:mod}
 All the instructions included in the ARMv6-M have been characterised in our representation.
 According to the reference manual description, the ARMv6-M is a subset of ARMv7-M and
 supports Thumb 16-bit instruction set, including a small number of 32-bit instructions
