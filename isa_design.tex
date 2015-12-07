@@ -98,7 +98,7 @@ level of abstraction of the languages used at the early-stages of design. This w
 presents a design flow for an easier specification, visualisation, simulation,
 customisation and hardware synthesis of instruction sets.
 
-The consultation of an ISA reference manual (i.e. ARMv6-M \cite{armManual}) can be
+The consultation of an ISA reference manual (i.e. ARMv6-M~\cite{armManual}) can be
 a difficult and tedious operation. Anthony Fox, in his attempt to describe a model
 of the ARMv7 instruction set, argues: ``official reference manuals are large,
 stretching to many hundreds of pages - one can easily overlook subtle details or
@@ -110,20 +110,21 @@ In the light of the above, a simple and formal way to specify and, more
 specifically, visualise instruction sets is needed. A visual graph-based model can
 help designers for a quicker comprehension of the processor. ISAs in fact provide a
 software level description of the hardware itself. We use Conditional Partial Order
-Graph (CPOG) \cite{cpog},\cite{andreyPhd} as the visualisation model. They can
+Graph (CPOG) \cite{cpog}, \cite{andreyPhd} as the visualisation model. They can
 efficiently represent concurrent and sequential behaviours, and already come with a
 tested tool-kit for the customisation, encoding and hardware synthesis
 (\cite{workcraft}, \cite{satEncoding}, \cite{acsd}).
 
 We propose a new domain-specific language for ISA specification. The current
-implementation is embedded in \textit{Haskell} This is a recent and extremely
-flexible functional language, and provides predefined constructs and classes for
-our purpose (i.e. monad class).
+implementation is embedded in \textit{Haskell}~\cite{haskell}. This is high-level
+functional language that provides static type checking and inference capabilites,
+as well as useful predefined constructs and classes that we rely on in our
+implementation (i.e. the Monad class).
 
 The article is organised as follows: Section \ref{sec:dsl} describes the framework
 we have developed, and how this can be used to interact with all the steps of the 
-design flow. Section \ref{sec:arm} presents a case-study: the ARMv6-M ISA and how this
-can be converted into a more readable representation via the CPOG. 
+design flow. Section \ref{sec:arm} presents a case-study: the ARMv6-M ISA and how it
+can be converted into a more comprehensible CPOG representation. 
 And finally, Section \ref{sec:conclusion} summarises the achieved results, 
 outlining the future research directions.
 
@@ -182,14 +183,14 @@ to build the infrastructure of the domain specific language (DSL).
 
 The processor is seen as an entity composed by a combination of an internal and
 external storage. Respectively, the former is represented by a set of registers,
-while the latter by a memory that contains both instructions and data; in compliance with von
-Newumann architecture. 
+while the latter by a memory that contains both instructions and data; in compliance with the
+von Neumann architecture. 
 
 The processor executes instructions, that modify the state of the modelled machine.
 
 $$P(Regs, Mem) \Rightarrow P'(Regs, Mem)$$
 
-\noindent Every time the processor pulls off an instruction indeed, the state of the system
+\noindent Every time the processor executes an instruction indeed, the state of the system
 evolves into a new state $P'$ different from the previous one. Where either the registers and
 the memory might be different. This approach is relatively similar to the processor
 description in \cite{isaFunc}. Therefore, we are confident that the high degree of
@@ -210,7 +211,7 @@ interpretation, is discussed in Section \ref{sec:ver}.
 %  - Monad class
 %  - Processor seen as a Memory/register entity which evolves over time
 What marks our approach is the high degree of flexibility and abstraction that can
-extensively tailor every processor. The framework we present in this document is composed
+be tailored to every processor. The framework we present in this document is composed
 by different layers (modelled in various and interconnected modules). Each of them plays 
 an important role in the structure.
 
@@ -225,8 +226,8 @@ The former can be accessed either via the name of a
 special purpose register, or using the pattern $R \; Int$ (i.e. $R \; 5$, to point out the
 fifth location in the register file). Memory is accessed via an integer type address instead.
 Immediate values are also internally seen as integers. This approach is not
-accurate. Some of the features - the bit length of the registers, or the
-endianness of the data - are lost. Nonetheless, the high level of abstraction of
+accurate. Some of the features -- the bit length of the registers, or the
+endianness of the data -- are lost. Nonetheless, the high level of abstraction of
 the framework allows the interpretation of the model from several point of view (see Section
 \ref{sec:func}).
 
@@ -249,7 +250,7 @@ the stack pointer.
 \textit{ISA\_model} is the module where the user is supposed to introduce the custom 
 instruction set architecture. Based on the bottom layers, this
 module can be customised adding other special purpose registers and types for the ALU.
-Most important, this will contain all the instructions one wants to include in a custom ISA.
+Most importantly, this will contain all the instructions one wants to include in a custom ISA.
 This will act as an interface for the software level simulation and will be taken into
 account for the conversion towards other models and languages (Section \ref{sec:func}).
 
@@ -300,9 +301,9 @@ CPOG formalism. Even though Haskell provides readable and simple constructs, ins
 set specifications are intrinsically difficult to read and understand.
 Capturing all the dependencies between every micro-operation within the instruction is
 complex and, as already mentioned, error-prone. Reading the whole reference manual can take
-long. In the light of the above, formal specification can be converted into partial orders,
-a visual graph-based representation composed by nodes and arcs, much more readable either
-than reference psuedo-code and Haskell statements.
+a long time. In the light of the above, formal specification can be converted into partial orders,
+a visual graph-based representation composed by nodes and arcs, much more comrehensible 
+than reference psuedo-code or Haskell statements.
 
 \begin{figure}[ht!]
 \begin{center}
@@ -313,20 +314,20 @@ than reference psuedo-code and Haskell statements.
 \end{figure}
 
 This allows the user to employ the tool-chain around the conditional partial order
-graphs. Either enabling the visual customisation of the dependencies of the instructions in 
-\verb|Workcraft|, and the built-in synthesis tools available. A fairly
+graphs, enabling the visual customisation of the dependencies of the instructions in 
+\verb|Workcraft| and CPOG-based synthesis tools. A fairly
 accurate measurement of the size of the final microcontroller for the processor control
 unit can be automatically derived therefore, allowing the designer to come back at the
-specification phase whether some of the requirements (area, power consumption) have not been
+specification phase if some of the requirements (area, power consumption) have not been
 met.
 
-A clearer picture of the whole design-flow is depicted in Figure \ref{fig:flow}.
+The whole design-flow is illustrated in Figure \ref{fig:flow}.
 
 %Paulius
 \subsection{Verification with Event-B}
 \label{sec:ver}
 %------------------------------------------------
-Design validation process is instrumental for any kind of system. A typical system design
+Design validation process is instrumental for any kind of systems. A typical system design
 process requires numerous minor optimization modifications. The system needs to be 
 re-validated after each refinement step, making this phase not particularly cost and time
 effective. Applying formal techniques is a complex task, which requires a deep mathematical
@@ -343,16 +344,16 @@ is commonly used in industry. Excellent tool support and proof driven process \c
 were key aspects which led us to choose this particular method.
 
 The formalism is based on First Order Logic and Zermelo-Fraenkel set theory. This is a
-relatively high-level language, although very expressive. System specification is the initial
+high-level and expressive language. System specification is the initial
 step in formal validation and it starts with describing requirements for the design. System
 requirements should completely cover functionality and environment of the design. Next stage
 is represented by the system development. Here, the model is developed: starting with the most
 abstract model, this is gradually refined broadening the level of granularity.
 
-Formal verification is a another major branch of formal modelling. After that the system is
+Formal verification is another major branch of formal modelling. After the system is
 specified and abstracted, its conditions need to be rigorously proved. Model is considered
 correct if and only if all conditions, also known as \textit{proof obligations}, are
-satisfied. Beforehand, designer is required to define invariants of the system , which need to
+satisfied. Beforehand, designer is required to define invariants of the system, which need to
 hold as system progress. In Event-B these conditions are used to construct verification
 conditions for Invariant Preservation Rule. There are few of these rules, but the most
 important are Invariant Preservation Rule, Deadlock Freedom Rule and also satisfaction of
@@ -382,7 +383,7 @@ invariants hold after event.
 % Introduction of ARMv6-M ISA
 
 Case study section intends to demonstrate potential of our domain specific language by
-analysing ARM Cortex M0+ microprocessor's instruction set. This section starts with a brief
+analysing ARM Cortex M0+ microprocessor instruction set. This section starts with a brief
 description of the ARMv6-M instruction set and information we used to construct our model
 (Section \ref{sec:feat}). Further, concrete example of translated instruction to is
 demonstrated together with visual graph representation (Sections \ref{sec:mod} and
@@ -416,10 +417,10 @@ the microprogram module. Therefore, many of the instructions characterised are s
 the methods present at the bottom layers. For instance, the operation
 \textit{incAndFetchInstruction} (depicted in the partial order in Fig. \ref{fig:andPO})
 consists of three sequential micro-operations: incrementing the program counter (PC)
-register, writing the result back into such a register and eventually moving the location of
-the memory pointed out by the PC into the instruction register (IR). This operation is
-executed at the end of nearly all the instructions, but the ones involving any branching
-mechanisms. Another example which can be analysed is the pop operation. This is in charge of
+register, writing the result back into such a register and eventually moving the contents of
+the memory location pointed out by the PC into the instruction register (IR). This operation is
+executed at the end of nearly all the instructions, except for the ones involving any branching
+mechanisms. Another example which can be analysed is the \textit{pop} operation. It is in charge of
 decrementing/incrementing the stack pointer (SP) register (according to the internal
 architecture), and then fetching from the memory location addressed by the SP a chunk of 
 data. These two operations are used inside the main instruction set architecture.
@@ -432,13 +433,13 @@ final model. Nonetheless, the high degree of abstraction we kept downsizes the i
 these problems. The registers present in our model are: linked register (LR), application
 program status register (APSR), interrupt program status register (IPSR), execution program
 status register (EPSR), the special-purpose mask register (also called PRIMASK), the 
-pecial-purpose control register (CONTROL). They are needed to manage different internal
+special-purpose control register (CONTROL). They are needed to manage different internal
 functions. In our model, we limited at reading and writing them according to the reference
 description.
 
 Additionally, all the arithmetic, logical and bitwise operations are represented in our
 model. The lack of technical details is present also in this side, limiting the accuracy of
-the model. We assumed that all these kind of operations are
+the model. We assumed that all these operations are
 performed via the arithmetic logic unit (ALU). Unfortunately, this is just an
 assumption, we are not sure whether the shift operation is truly accomplished
 through such a unit or via another dedicated one, for instance.
@@ -467,19 +468,19 @@ introduced to the architecture as part of the Thumb-2 technology in ARMv6T2.
 \end{center}
 \end{figure}
 
-Some of the instructions are associated to a couple of opcodes: named T1 and
+An intersting feature of the ISA is that some instructions have two opcodes, named T1 and
 T2. This provides a more flexible architecture, which in turn comes up with a
 flexible assembly language. This is the case for the \textit{ADD (immediate)} instruction,
-for instance. The first encoding associated to it is over seven bits, the rest of the
-instruction chunk is meant for hosting an immediate value (3-bit), and two more register
+for instance. The first encoding T1 has a seven bit opcode, and the rest of the
+instruction encoding is meant for hosting an immediate value (3-bit), and two more register
 locations (3-bit each): the source of the first operand and the destination of the result.
-The encoding \textit{T2} instead comes up with a quite different pattern. The opcode
-associated to it is over 5 bits, then there is a register (3-bit) which acts either as source
-of the first operand and the destination of the result; the remaining 8 bits contain a longer
+The second encoding \textit{T2} instead comes up with a quite different pattern. The opcode
+associated to it is has only 5 bits, then there is a register (3-bit) which acts both as the
+source operand and the destination of the result; the remaining 8 bits contain a longer
 immediate value. Both of the encodings are depicted in Figure \ref{fig:ADDEnc}. These
 instructions can be used for different purposes. Because of time constraints, we focused just
 on the instructions with the encoding T1. Nonetheless, we plan to represent the
-second encoding in future research, for a more consistent benchmark (see Section
+second encoding in future work, in order to create a fully realistic benchmark (see Section
 \ref{sec:frd}).
 
 The pseudocode specification of the instructions have been translated into the domain
@@ -581,15 +582,15 @@ the source specification have been characterised with. There has not been loss o
 information in the conversion process.
 
 % Alex
-\subsection{Towards readable specifications}
+\subsection{Visualisation}
 \label{sec:read}
 % Similarities between pseudo reference code and our model
 % Show Partial order examples derived by hand
 % Maybe an encoding example
-Going towards a more readable specification was one of our main goal. As discussed in Section
+Going towards a more comprehensible ISA representation was one of our main goals. As discussed in Section
 \ref{sec:intro} in fact, often instruction set architecture reference documents are hard to
 read and fully understand. We believe that having a visual representation of the operations
-which occur inside each instruction would make the understanding easier, yet quicker. That is
+which occur inside each instruction would make the understanding easier and quicker. That is
 the main reason why we chose to adopt partial orders to represent the behaviour of
 instructions. Each instruction can be analysed singularly. The behaviour can be isolated,
 focusing on the causality of the operations to execute.
@@ -607,7 +608,7 @@ modelling instructions. Partial orders address this requirement with the usage o
 ($\bigcirc$) and dependencies ($\rightarrow$). Fig. \ref{fig:pos}(a) depicts a partial order
 where the three operations are executed sequentially. Fig. \ref{fig:pos}(b) instead shows
 four operations $\lbrace A,B,C,D \rbrace$ which can be executed with different orders. 
-$\lbrace A,B \rbrace$ and $\lbrace C,D \rbrace$ are concurrent paths. A detailed
+$A \rightarrow B$ and $C \rightarrow D$ are concurrent paths. A detailed
 description can be found in \cite{andreyPhd}.
 
 In the light of the above, we are working on automating the conversion process from the
@@ -620,7 +621,7 @@ arithmetic logic unit can be adopted for the execution of
 different operations: i.e. addition, multiplication, shift, etc. One might want to represent
 each single operation separately with a different node 
 (trading off some readability with accuracy), or raise the
-level of abstraction loosing the information about the actual operation.
+level of abstraction losing the information about the actual operation.
 
 \begin{figure}[ht!]
 \begin{center}
@@ -636,14 +637,14 @@ This would allow the development of a more accurate model without overlapped reg
 accesses. For instance, let us assume that the register file has got two different input
 writing ports. This would allow two different registers to be written at the same time.
 The destination of a writing operation should be taken into consideration therefore,
-in order to avoid a simultaneous access at the same location of the register file.
+in order to avoid a simultaneous access at the same location of the register file
 (see Fig. \ref{fig:depPO}). The partial order in Fig. \ref{fig:depPO}(b) is not allowed
 because the two writing mechanisms can be triggered concurrently.
 A dependency should be inserted, as in the graph in Fig. \ref{fig:depPO}(c).
 
-For easier the understanding of the reader, an example will be showed. In the Listing
-\ref{lis:and} the specification of the AND (register) instruction (ARMv6-M ISA
-\cite{armManual}) is depicted.\\
+The following example clarifies the above issue. Listing
+\ref{lis:and} gives a specification of the AND (register) instruction (ARMv6-M ISA
+\cite{armManual}).\\
 
 \begin{lstlisting}[caption=AND (register) instruction - Haskell-based specification,
 frame=single, label=lis:and]
@@ -661,7 +662,7 @@ and_RegT1 rm rdn = do
 
 \noindent
 This instruction can be automatically translated into the partial order in Figure
-\ref{fig:andPO}. Every statement of the specification univocally corresponds to a node in the
+\ref{fig:andPO}. Every statement of the specification corresponds to a node in the
 graph. For instance, the one on sixth line correspond to the node named ``writeReg''.
 The dependencies between the nodes are obtained by looking at the values which are needed for
 the execution of each operation. For instance, the second ALU operation needs the value
@@ -685,7 +686,7 @@ clearly expressed via arcs. In addition, the graph-based model provides a good d
 of fidelity; combined with the code-based specification it can lead to a good tradeoff
 between readability and accuracy.
 
-Another example which might be of interest discussing about is the unconditional branch. This
+Another example worth a discussion is the unconditional branch. This
 instruction simply causes a branch to a target address. The Haskell-based specification is
 depicted below:\\
 
@@ -699,11 +700,11 @@ b imm32 = do
 \end{lstlisting}
 
 \noindent
-The particularity of this instruction is the lack of the incAndFetchInstruction procedure.
+The particularity of this instruction is the lack of the \textit{incAndFetchInstruction} step.
 The new instruction register indeed is obtained by the address computed internally, adding an
 32-bit immediate address with the current program counter register. In Figure \ref{fig:bPO}
-the partial order associate to the branch instruction is showed. Reader should notice that
-there is not a direct dependency between the \textit{writeReg} and the \textit{readmemory}
+the partial order associate to the branch instruction is showed. The reader should notice that
+there is no direct dependency between the \textit{writeReg} and the \textit{readMemory}
 nodes. Nonetheless, a dependency has been inserted in order to fetch the new instruction once
 that the PC register has been updated. This might be named a \textit{functional dependency}
 and is implicit to the incAndFetchInstruction procedure either.
@@ -711,7 +712,7 @@ and is implicit to the incAndFetchInstruction procedure either.
 \begin{figure}[ht!]
 \begin{center}
 	\includegraphics[width=8.7cm]{IMG/b.eps}
-	\caption{B instruction - ARMv6-M (\cite{armManual}, p.119)}
+	\caption{Branch instruction - ARMv6-M (\cite{armManual}, p.119)}
 	\label{fig:bPO}
 \end{center}
 \end{figure}
@@ -759,7 +760,7 @@ simple addition of two source registers is performed and the sum is loaded to th
 which is then followed by increment of program counter register. 
 
 However, analysis of ARM Cortex M0+ instruction set showed us that even simple instructions like addition
-are slightly more complicated. Therefore, to make our model more feasible another refinement step would be
+are difficult to specify formally in Event-B. Therefore, to make our model more feasible another refinement step would be
 necessary in order to capture the same level of details as in specifications. Another important requirement
 for instruction validation would be translation automation. Currently, we had to define the system and
 correctness conditions as well as prove them. As stated before it is our objective to hide this mathematical
@@ -781,11 +782,11 @@ In addition, we showed how such a framework can be converted into a visual-based
 representation with different tradeoffs for maximising either the readability or the accuracy
 of the graph-based model. The latter, based on the Conditional Partial Order Graph, can
 exploit a built-in tool-chain embedded in \verb|Workcraft| for visualisation and hardware
-synthesis purpose. In particular, this representation aims at simplifying the understanding of
+synthesis purposes. In particular, this representation aims at simplifying the understanding of
 the processor instruction sets.
 
 This open-source framework opens the path towards different other languages and tools which
-can be adopted in the design flow. Event-B might be one of this piece of a puzzle which we
+can be adopted in the design flow. Event-B might be one such piece of the puzzle which we
 hope to be able to complete, together with the whole community in this field.
 
 %Alex
@@ -801,12 +802,12 @@ allow us to derive the hardware microcontroller and make a consistent comparison
 area, power consumption, latency, etc.) with the one which the ARM Cortex-M0 embeds.
 
 Secondly, we will work on a plugin to automatically convert the specification into the
-vent-B language. This will allow the usage of sound theorem provers for the formal
+Event-B language. This will allow the usage of sound theorem provers for the formal
 verification of the ISA, an extremely useful instrument which designers might benefit from.
 
-From the point of view of the case study itself. The model will be expanded including the
-T2 encodings. Other case studies will be taken into account, such as the instruction
-sets embedded in the Texas Instruments MSP430 and the Intel 8051. As is pointed out in
+From the point of view of the case study itself, the model will be expanded to include the
+T2 encodings. Other case studies will be carried out, such as the instruction
+sets of the Texas Instruments MSP430 and the Intel 8051 processors. As is pointed out in
 \cite{webArticle}, nowadays there are quite a few architectures with a relevant market size -
 by ARM, ARC, Xtensa, MIPS. Unit volumes are progressively increasing, hence we believe the
 need for modelling and experimenting by these companies will do so. Eventually, designers and
