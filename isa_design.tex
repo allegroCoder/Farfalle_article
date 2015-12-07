@@ -14,7 +14,7 @@
 \usepackage{amsmath}
 \renewcommand{\arraystretch}{1.3}
 \usepackage{etoolbox}
-\apptocmd{\thebibliography}{\setlength{\itemsep}{2pt}}{}{}
+\apptocmd{\thebibliography}{\setlength{\itemsep}{5pt}}{}{}
 \usepackage{url}
 \usepackage{caption}
 \usepackage{subcaption}
@@ -88,7 +88,6 @@ the presented approach with the others available in the literature.
 
 \IEEEpeerreviewmaketitle
 
-
 \section{Introduction}
 \label{sec:intro}
 Technology progress allows industries to integrate always more transistors over the
@@ -102,18 +101,16 @@ The consultation of an ISA reference manual (i.e. ARMv6-M~\cite{armManual}) can 
 a difficult and tedious operation. Anthony Fox, in his attempt to describe a model
 of the ARMv7 instruction set, argues: ``official reference manuals are large,
 stretching to many hundreds of pages - one can easily overlook subtle details or
-become bogged down with ``uninteresting'' background information'' (\cite{armv7},
-Section 1). And yet: ``official descriptions are semi-formal (ambiguous)''
-(\cite{armv7}, Section 1). 
+become bogged down with ``uninteresting'' background information''~(\cite{armv7},
+Section 1). And yet: ``official descriptions are semi-formal (ambiguous)''~(\cite{armv7}, Section 1). 
 
 In the light of the above, a simple and formal way to specify and, more
 specifically, visualise instruction sets is needed. A visual graph-based model can
 help designers for a quicker comprehension of the processor. ISAs in fact provide a
 software level description of the hardware itself. We use Conditional Partial Order
-Graph (CPOG) \cite{cpog}, \cite{andreyPhd} as the visualisation model. They can
+Graph (CPOG)~\cite{cpog}\cite{andreyPhd} as the visualisation model. They can
 efficiently represent concurrent and sequential behaviours, and already come with a
-tested tool-kit for the customisation, encoding and hardware synthesis
-(\cite{workcraft}, \cite{satEncoding}, \cite{acsd}).
+tested tool-kit for the customisation, encoding and hardware synthesis~\cite{workcraft}\cite{satEncoding}\cite{acsd}.
 
 We propose a new domain-specific language for ISA specification. The current
 implementation is embedded in \textit{Haskell}~\cite{haskell}. This is high-level
@@ -121,17 +118,17 @@ functional language that provides static type checking and inference capabilites
 as well as useful predefined constructs and classes that we rely on in our
 implementation (i.e. the Monad class).
 
-The article is organised as follows: Section \ref{sec:dsl} describes the framework
+The article is organised as follows: Section~\ref{sec:dsl} describes the framework
 we have developed, and how this can be used to interact with all the steps of the 
-design flow. Section \ref{sec:arm} presents a case-study: the ARMv6-M ISA and how it
+design flow. Section~\ref{sec:arm} presents a case-study: the ARMv6-M ISA and how it
 can be converted into a more comprehensible CPOG representation. 
-And finally, Section \ref{sec:conclusion} summarises the achieved results, 
+And finally, Section~\ref{sec:conclusion} summarises the achieved results, 
 outlining the future research directions.
 
 \subsection{Related work}
 
 An attempt to use partial orders to describe the instructions of a complex hardware
-structure can be found in \cite{maxPhd}. The author uses Conditional Partial Order
+structure can be found in~\cite{maxPhd}. The author uses Conditional Partial Order
 Graphs to visually describe the instructions of the Intel 8051 Microcontroller.
 Yet, he used them for building an asynchronous controller and managing the internal
 execution flow of the datapath elements. The manual construction of partial orders
@@ -166,9 +163,9 @@ introduced via a xml-based language, fairly readable but not very flexible.
 In this work we aim at developing a Domain Specific Language based on Haskell. This will be
 adopted for the representation of the ARMv6-M, used as the case study. The target
 representation abstracts some details such as the bit-length of the registers or immediate
-values. The goal is the integration of the framework presented in Section \ref{sec:struct}
-into a systematic design flow (Section \ref{sec:func}), while easier the understanding of
-a processor instruction set with a graph-based model (Section \ref{sec:read}).
+values. The goal is the integration of the framework presented in Section~\ref{sec:struct}
+into a systematic design flow (Section~\ref{sec:func}), while easier the understanding of
+a processor instruction set with a graph-based model (Section~\ref{sec:read}).
 
 %------------------------------------------------
 
@@ -176,7 +173,7 @@ a processor instruction set with a graph-based model (Section \ref{sec:read}).
 \section{Domain Specific Language}
 \label{sec:dsl}
 % DSL introduction
-The language used to describe the framework is Haskell \cite{haskell}. This is a 
+The language used to describe the framework is Haskell~\cite{haskell}. This is a 
 functional language with high abstraction capabilities.
 We followed the path, already explored in \cite{armv7}, implementing the \textit{monad class}
 to build the infrastructure of the domain specific language (DSL).
@@ -196,10 +193,10 @@ the memory might be different. This approach is relatively similar to the proces
 description in \cite{isaFunc}. Therefore, we are confident that the high degree of
 abstraction obtained will allow the bidirectional connection of these two representations.
 
-This section is organised as follow: Section \ref{sec:struct} describes the structure of the
-framework. A characterization of the design flow derived by this approach is presented in
-Section \ref{sec:func}, while a brief description of the verification side, related to Event-B
-interpretation, is discussed in Section \ref{sec:ver}.
+This section is organised as follow: Section~\ref{sec:struct} describes the structure of the
+framework. A characterisation of the design flow derived by this approach is presented in
+Section~\ref{sec:func}, while a brief description of the verification side, related to Event-B
+interpretation, is discussed in Section~\ref{sec:ver}.
 
 % Alex
 \subsection{Structure of the framework}
@@ -228,15 +225,16 @@ fifth location in the register file). Memory is accessed via an integer type add
 Immediate values are also internally seen as integers. This approach is not
 accurate. Some of the features -- the bit length of the registers, or the
 endianness of the data -- are lost. Nonetheless, the high level of abstraction of
-the framework allows the interpretation of the model from several point of view (see Section
-\ref{sec:func}).
+the framework allows the interpretation of the model from several point of view (see
+Section~\ref{sec:func}).
 
 Finally, ComputationType is defined. This is a flexible type in input to the
 arithmetic logic unit (ALU), which can be modified according to the ISA
 needs. As far as this unit is concerned in fact, different combinations of inputs can be
 given to it: one single register for an increment/decrement operation, either two 
 registers, or one register and an immediate for an ADD/SUB/MUL operation, and so on.
-That is the main reason of the scalability of this type.
+Therefore, ComputationType is not a fixed type and can be extended for fitting different
+ALU architectures.
 
 \textit{Microprogram} is the interface based on the low-level module just described.
 In this, just a few operations, always present in a general purpose processor, are
@@ -252,7 +250,7 @@ instruction set architecture. Based on the bottom layers, this
 module can be customised adding other special purpose registers and types for the ALU.
 Most importantly, this will contain all the instructions one wants to include in a custom ISA.
 This will act as an interface for the software level simulation and will be taken into
-account for the conversion towards other models and languages (Section \ref{sec:func}).
+account for the conversion towards other models and languages (Section~\ref{sec:func}).
 
 \textit{Main} is the module meant for the high-level software simulation, in here
 all the instructions can be executed over the processor modelled. This might be useful
@@ -267,12 +265,12 @@ errors can be captured analysing the behaviour of the whole system.
 \end{center}
 \end{figure}
 
-In Figure \ref{fig:structure}, the structure of the framework is depicted, pinpointing 
+In Figure~\ref{fig:structure}, the structure of the framework is depicted, pinpointing 
 on the interconnections between the modules described. The structure is rather simple
 and small, and can be potentially extended with new procedures and types, making
 this approach flexible and scalable.
 
-In Section \ref{sec:arm} we will show how this framework has been implemented and extended
+In Section~\ref{sec:arm} we will show how this framework has been implemented and extended
 to model the ARMv6-M.
 
 % Alex
@@ -285,15 +283,15 @@ given to this work. The Domain Specific Language indeed, once used to model
 a processor, can be potentially translated into other languages. In turn, they
 can be progressively employed with the advantages and tools they come with. It is worth
 mentioning that some of the functionalities discussed in this section have not been
-implemented yet. Though, they will be part of our future work in this area (see Section
-\ref{sec:frd}).
+implemented yet. Though, they will be part of our future work in this area (see 
+Section~\ref{sec:frd}).
 
-The ISA specification might be converted into Event-B language \cite{eventB}. This is a
+The ISA specification might be converted into Event-B language~\cite{eventB}. This is a
 formal technique used to analyse the model at the system level. It comes with some theorem
 provers which are able to verify the consistency of the system, proving that there are 
 no inconsistencies between instructions. This is an interesting feature itself, which could
 be particularly useful when applied to instruction sets. It falls within the side of the
-formal \textit{verification} (see Section \ref{sec:ver} for a detailed description).
+formal \textit{verification} (see Section~\ref{sec:ver} for a detailed description).
 
 \textit{Visualisation} and \textit{synthesis} are two other
 interpretations which can be given to this framework, somehow connected to each other via
@@ -302,7 +300,7 @@ set specifications are intrinsically difficult to read and understand.
 Capturing all the dependencies between every micro-operation within the instruction is
 complex and, as already mentioned, error-prone. Reading the whole reference manual can take
 a long time. In the light of the above, formal specification can be converted into partial orders,
-a visual graph-based representation composed by nodes and arcs, much more comrehensible 
+a visual graph-based representation composed by nodes and arcs, much more comprehensible 
 than reference psuedo-code or Haskell statements.
 
 \begin{figure}[ht!]
@@ -321,7 +319,7 @@ unit can be automatically derived therefore, allowing the designer to come back 
 specification phase if some of the requirements (area, power consumption) have not been
 met.
 
-The whole design-flow is illustrated in Figure \ref{fig:flow}.
+The whole design-flow is illustrated in Figure~\ref{fig:flow}.
 
 %Paulius
 \subsection{Verification with Event-B}
@@ -337,10 +335,10 @@ include methods and tool support, which intends to hide mathematical complexity 
 validation process. 
 
 % Specification of Model%
-Event-B \cite{eventbbook}, originated from well known formalism called B method, is one of the most used
+Event-B~\cite{eventbbook}, originated from well known formalism called B method, is one of the most used
 specification languages in safety critical software development area. Over the years, Event-B
 proved to be successful mainly due to a few large academic research projects. Nowadays, this
-is commonly used in industry. Excellent tool support and proof driven process \cite{summevent} 
+is commonly used in industry. Excellent tool support and proof driven process~\cite{summevent} 
 were key aspects which led us to choose this particular method.
 
 The formalism is based on First Order Logic and Zermelo-Fraenkel set theory. This is a
@@ -371,7 +369,7 @@ refinement obligation. These set of rules just indicates what needs to be proven
 \end{center}
 \end{figure}
 
-In Figure \ref{fig:eveB}, sequent of Invariant Preservation Rule is stated, where hypothesis
+In Figure~\ref{fig:eveB}, sequent of Invariant Preservation Rule is stated, where hypothesis
 consists of axioms, invariants and guards of the events. The goal is to validate whether
 invariants hold after event.
 
@@ -385,10 +383,10 @@ invariants hold after event.
 Case study section intends to demonstrate potential of our domain specific language by
 analysing ARM Cortex M0+ microprocessor instruction set. This section starts with a brief
 description of the ARMv6-M instruction set and information we used to construct our model
-(Section \ref{sec:feat}). Further, concrete example of translated instruction to is
-demonstrated together with visual graph representation (Sections \ref{sec:mod} and
-\ref{sec:read}). As the basis for our experiment, we used microprocessor manual
-\cite{armManual}, which includes short descriptions of each instruction as well as
+(Section~\ref{sec:feat}). Further, concrete example of translated instruction to is
+demonstrated together with visual graph representation (Sections~\ref{sec:mod} and
+\ref{sec:read}). As the basis for our experiment, we used microprocessor
+manual~\cite{armManual}, which includes short descriptions of each instruction as well as
 functionality pseudocode and encodings. We used this information to build an instruction set
 model of this specific microprocessor. 
 
@@ -406,16 +404,16 @@ As far as the reference documents are concerned, instructions characterised in t
 come up with a bare description. Hence, sometimes being completely accurate with 
 the source system is complex, also because of the lack of technical information about the
 original architecture. This was the case for some of the functions such as DataMemoryBarrier,
-BkptInstrDebugEvent, Hint\_SendEvent, and so on \cite{armManual}.
+BkptInstrDebugEvent, Hint\_SendEvent, and so on~\cite{armManual}.
 None of them are described in the reference manual, therefore these
 functions are considered to be executed atomically (by one single node). Obviously, this
 might not be the case and a deeper research with the producers of the core is needed to
 untangle these operations.
 
-Based on the structure described in Section \ref{sec:struct}, we built the model on top of
+Based on the structure described in Section~\ref{sec:struct}, we built the model on top of
 the microprogram module. Therefore, many of the instructions characterised are supported by
 the methods present at the bottom layers. For instance, the operation
-\textit{incAndFetchInstruction} (depicted in the partial order in Fig. \ref{fig:andPO})
+\textit{incAndFetchInstruction} (depicted in the partial order in Figure~\ref{fig:andPO})
 consists of three sequential micro-operations: incrementing the program counter (PC)
 register, writing the result back into such a register and eventually moving the contents of
 the memory location pointed out by the PC into the instruction register (IR). This operation is
@@ -462,13 +460,13 @@ introduced to the architecture as part of the Thumb-2 technology in ARMv6T2.
 
 \begin{figure}[ht!]
 \begin{center}
-	\includegraphics[width=8.2cm]{IMG/encodings.eps}
-	\caption{ADD (immediate) instruction encodings - ARMv6-M (\cite{armManual}, p.107-108)}
+	\includegraphics[width=8.2cm]{IMG/encodings_ex.eps}
+	\caption{ADD (immediate) encodings - ARMv6-M~(\cite{armManual}, p.107-108)}
 	\label{fig:ADDEnc}
 \end{center}
 \end{figure}
 
-An intersting feature of the ISA is that some instructions have two opcodes, named T1 and
+An interesting feature of the ISA is that some instructions have two opcodes, named T1 and
 T2. This provides a more flexible architecture, which in turn comes up with a
 flexible assembly language. This is the case for the \textit{ADD (immediate)} instruction,
 for instance. The first encoding T1 has a seven bit opcode, and the rest of the
@@ -477,14 +475,27 @@ locations (3-bit each): the source of the first operand and the destination of t
 The second encoding \textit{T2} instead comes up with a quite different pattern. The opcode
 associated to it is has only 5 bits, then there is a register (3-bit) which acts both as the
 source operand and the destination of the result; the remaining 8 bits contain a longer
-immediate value. Both of the encodings are depicted in Figure \ref{fig:ADDEnc}. These
+immediate value. Both of the encodings are depicted in Figure~\ref{fig:ADDEnc},
+where also an example of how these two encoding might be used is present. These
 instructions can be used for different purposes. Because of time constraints, we focused just
 on the instructions with the encoding T1. Nonetheless, we plan to represent the
-second encoding in future work, in order to create a fully realistic benchmark (see Section
-\ref{sec:frd}).
+second encoding in future work, in order to create a fully realistic benchmark (see 
+Section~\ref{sec:frd}).\\
+
+\begin{lstlisting}[caption=ADD (immediate) instruction - Reference specification,
+frame=single, label=lis:add]
+EncodingSpecificOperations();
+(result, carry, overflow) = AddWithCarry(R[n], imm32, '0');
+R[d] = result;
+if setflags then
+    APSR.N = result<31>;
+    APSR.Z = IsZeroBit(result);
+    APSR.C = carry;
+    APSR.V = overflow;
+\end{lstlisting}
 
 The pseudocode specification of the instructions have been translated into the domain
-specific language (described in Section \ref{sec:dsl}). During the conversion process, we
+specific language (described in Section~\ref{sec:dsl}). During the conversion process, we
 assumed that all the parameters which are involved in the internal operations are available
 and ready to be used. This is the case for the \textit{imm32} value, for instance, present in
 some of the instructions. This is over 32 bits, and is obtained extending the immediate value
@@ -493,28 +504,14 @@ decoding function able to decode the instruction by the opcode. This is theoreti
 supposed to execute the right operations (such as the immediate extension) prior to the
 instruction execution.
 
-\begin{lstlisting}[caption=ADD (immediate) instruction - Reference specification,
-frame=single, label=lis:add]
-EncodingSpecificOperations();
-(result, carry, overflow) = AddWithCarry(R[n], imm32, '0');
-R[d] = result;
-if setflags then
-	APSR.N = result<31>;
-	APSR.Z = IsZeroBit(result);
-	APSR.C = carry;
-	APSR.V = overflow;
-\end{lstlisting}
-
 Let us focus on the pseudocode specification of the ADD (immediate) instruction (showed in
-Listing \ref{lis:add}). Three parameters are needed for this instruction: \textit{R[n]},
+Listing~\ref{lis:add}). Three parameters are needed for this instruction: \textit{R[n]},
 \textit{R[d]} and imm32. \textit{setflags} is a flag always set to true for this instruction,
 therefore is not considered in our implementation. We can similarly characterise this instruction
 via the framework presented in this work, see Listing below.\\
 
 \begin{lstlisting}[caption=ADD (immediate) instruction - Haskell-based specification,
 frame=single, label=lis:addH]
-add_ImmT1 :: ARMv6_M m => Register m -> Register m
-							-> Value -> m ()
 add_ImmT1 rn rd imm32  = do
     result <- alu (adcRegImm rn imm32 0)
     writeRegister rd result
@@ -555,20 +552,18 @@ MemU[address,4] = R[t];
 \end{lstlisting}
 
 \noindent
-The specification based on the Haskell framework is listed in Listing \ref{lis:strH}.
+The specification based on the Haskell framework is listed in Listing~\ref{lis:strH}.
 According to the source description, this instruction takes in input three registers.
 \textit{rn} contains the base address, \textit{rm} the optionally shifted offset (shifted by
 0 bits in this implementation), and \textit{rt} that contains the data chunk to be stored
 into the memory location pointed by the final result, eventually placed in the variable
 \textit{address}. The arithmetic logic unit is in charge of performing either the shift and
-the addition, as described in Section \ref{sec:feat}. \textit{writeMemory} is one of the
-procedure implemented in the module basics (see Section \ref{sec:struct}). \textit{readBit}
+the addition, as described in Section~\ref{sec:feat}. \textit{writeMemory} is one of the
+procedure implemented in the module basics (see Section~\ref{sec:struct}). \textit{readBit}
 procedure, simply returns the bit 29, where the carry flag is stored.\\
 
 \begin{lstlisting}[caption=STR (register) instruction - Haskell-based specification,
 frame=single, label=lis:strH]
-str_RegT1 :: ARMv6_M m => Register m -> Register m
-						 -> Register m -> m ()
 str_RegT1 rm rn rt = do
     offset <- alu (shlRegImm rm 0 (readBit apsr 29))
     address <- alu (adcRegImm rn offset 0)
@@ -587,8 +582,8 @@ information in the conversion process.
 % Similarities between pseudo reference code and our model
 % Show Partial order examples derived by hand
 % Maybe an encoding example
-Going towards a more comprehensible ISA representation was one of our main goals. As discussed in Section
-\ref{sec:intro} in fact, often instruction set architecture reference documents are hard to
+Going towards a more comprehensible ISA representation was one of our main goals. As discussed in
+Section~\ref{sec:intro} in fact, often instruction set architecture reference documents are hard to
 read and fully understand. We believe that having a visual representation of the operations
 which occur inside each instruction would make the understanding easier and quicker. That is
 the main reason why we chose to adopt partial orders to represent the behaviour of
@@ -605,8 +600,8 @@ focusing on the causality of the operations to execute.
 
 The capability of representing sequential and concurrent behaviours is instrumental for
 modelling instructions. Partial orders address this requirement with the usage of nodes
-($\bigcirc$) and dependencies ($\rightarrow$). Fig. \ref{fig:pos}(a) depicts a partial order
-where the three operations are executed sequentially. Fig. \ref{fig:pos}(b) instead shows
+($\bigcirc$) and dependencies ($\rightarrow$). Figure~\ref{fig:pos}(a) depicts a partial order
+where the three operations are executed sequentially. Figure~\ref{fig:pos}(b) instead shows
 four operations $\lbrace A,B,C,D \rbrace$ which can be executed with different orders. 
 $A \rightarrow B$ and $C \rightarrow D$ are concurrent paths. A detailed
 description can be found in \cite{andreyPhd}.
@@ -638,18 +633,15 @@ accesses. For instance, let us assume that the register file has got two differe
 writing ports. This would allow two different registers to be written at the same time.
 The destination of a writing operation should be taken into consideration therefore,
 in order to avoid a simultaneous access at the same location of the register file
-(see Fig. \ref{fig:depPO}). The partial order in Fig. \ref{fig:depPO}(b) is not allowed
+(see Figure~\ref{fig:depPO}). The partial order in Figure~\ref{fig:depPO}(b) is not allowed
 because the two writing mechanisms can be triggered concurrently.
-A dependency should be inserted, as in the graph in Fig. \ref{fig:depPO}(c).
+A dependency should be inserted, as in the graph in Figure~\ref{fig:depPO}(c).
 
-The following example clarifies the above issue. Listing
-\ref{lis:and} gives a specification of the AND (register) instruction (ARMv6-M ISA
-\cite{armManual}).\\
+The following example clarifies the above issue. 
+Listing~\ref{lis:and} gives a specification of the AND (register) instruction (ARMv6-M ISA~\cite{armManual}).\\
 
 \begin{lstlisting}[caption=AND (register) instruction - Haskell-based specification,
 frame=single, label=lis:and]
-and_RegT1 :: ARMv6_M m => Register m -> Register m 
-			 				-> m ()
 and_RegT1 rm rdn = do
     shifted <- alu (shlRegImm rm 0 apsr[29])
     result <- alu (andRegImm rdn shifted)
@@ -661,27 +653,27 @@ and_RegT1 rm rdn = do
 \end{lstlisting}
 
 \noindent
-This instruction can be automatically translated into the partial order in Figure
-\ref{fig:andPO}. Every statement of the specification corresponds to a node in the
-graph. For instance, the one on sixth line correspond to the node named ``writeReg''.
+This instruction can be automatically translated into the partial order in
+Figure~\ref{fig:andPO}. Every statement of the specification corresponds to a node in the
+graph. For instance, the one on fourth line correspond to the node named ``writeReg''.
 The dependencies between the nodes are obtained by looking at the values which are needed for
 the execution of each operation. For instance, the second ALU operation needs the value
 called ``shifted'', computed during the first ALU operation. Therefore, the second action
 depends on the first one.
 ``incAndFetchInstruction'' is a basic operation defined inside the module microprogram (see
-Section \ref{sec:struct}). This is composed by three sequential operations, which are in this
+Section~\ref{sec:struct}). This is composed by three sequential operations, which are in this
 case extracted and depicted in the partial order, for an increased accuracy.
 
 \begin{figure}[ht!]
 \begin{center}
 	\includegraphics[width=\linewidth]{IMG/and_RegT1.eps}
-	\caption{AND (register) instruction - ARMv6-M (\cite{armManual}, p.116)}
+	\caption{AND (register) instruction - ARMv6-M~(\cite{armManual},~p.116)}
 	\label{fig:andPO}
 \end{center}
 \end{figure}
 
-The graph in Fig. \ref{fig:andPO} is more readable than the Haskell-based specification,
-listed in Listing \ref{lis:and}. The dependencies between the various operations are
+The graph in Figure~\ref{fig:andPO} is more readable than the Haskell-based specification,
+listed in Listing~\ref{lis:and}. The dependencies between the various operations are
 clearly expressed via arcs. In addition, the graph-based model provides a good degree
 of fidelity; combined with the code-based specification it can lead to a good tradeoff
 between readability and accuracy.
@@ -692,7 +684,6 @@ depicted below:\\
 
 \begin{lstlisting}[caption=B instruction - Haskell-based specification,
 frame=single, label=lis:and]
-b :: ARMv6_M m => m ()
 b imm32 = do
     nextInstrLocation <- alu (adcRegImm pc imm32 0)
     writeRegister pc nextInstrLocation
@@ -702,7 +693,7 @@ b imm32 = do
 \noindent
 The particularity of this instruction is the lack of the \textit{incAndFetchInstruction} step.
 The new instruction register indeed is obtained by the address computed internally, adding an
-32-bit immediate address with the current program counter register. In Figure \ref{fig:bPO}
+32-bit immediate address with the current program counter register. In Figure~\ref{fig:bPO}
 the partial order associate to the branch instruction is showed. The reader should notice that
 there is no direct dependency between the \textit{writeReg} and the \textit{readMemory}
 nodes. Nonetheless, a dependency has been inserted in order to fetch the new instruction once
@@ -712,7 +703,7 @@ and is implicit to the incAndFetchInstruction procedure either.
 \begin{figure}[ht!]
 \begin{center}
 	\includegraphics[width=8.7cm]{IMG/b.eps}
-	\caption{Branch instruction - ARMv6-M (\cite{armManual}, p.119)}
+	\caption{Branch instruction - ARMv6-M~(\cite{armManual},~p.119)}
 	\label{fig:bPO}
 \end{center}
 \end{figure}
@@ -729,9 +720,9 @@ is refinement driven process, where developer starts with the most abstract conc
 started by declairing very basic concepts of microprocessors system. A typical, Event-B model structure
 consists of context and machine frames, our intial context was used to declare some trivial constants and
 data types e.g.  microprocessors' word size. Original context then was refined by adding more information
-about operation type structure, decoding opcode/operands functions etc. For instance, in equation \ref{eq1},
+about operation type structure, decoding opcode/operands functions etc. For instance, in~(\ref{eq1}),
 we state that instruction is pair type with opcode and three operands, whereas i.e. opcode-decode function
-can be defined as shown in equation \ref{eq2}.
+can be defined as shown in~(\ref{eq2}).
 
 \begin{equation}
 (opcode,(value, (value, value))) \in OPERATION
@@ -747,7 +738,7 @@ extended those concepts as well as included events. Machine model required furth
 concepts of data, registers, program counter, but most importantly it contained instruction events. In
 Event-B, event can be conditional or unconditionally fired, depending on system requirements for that event.
 In the context of the microprocessor and our model, event of the particular instruction is executed if
-opcode satisfies the guard of the event. In example, equation \ref{eq3} shows one of the guards of the ADD
+opcode satisfies the guard of the event. For example, (\ref{eq3}) shows one of the guards of the ADD
 instruction.
 
 \begin{equation}
@@ -785,7 +776,7 @@ exploit a built-in tool-chain embedded in \verb|Workcraft| for visualisation and
 synthesis purposes. In particular, this representation aims at simplifying the understanding of
 the processor instruction sets.
 
-This open-source framework opens the path towards different other languages and tools which
+This open-source framework~\cite{repo} opens the path towards different other languages and tools which
 can be adopted in the design flow. Event-B might be one such piece of the puzzle which we
 hope to be able to complete, together with the whole community in this field.
 
@@ -797,7 +788,7 @@ Much research can be carried on about the work presented. First of all we will e
 framework developed, providing some procedures to capture the internal instruction
 dependencies, automatically deriving a partial order according to the level of abstraction
 chosen by the user. This will be used to move from the DSL - Haskell framework, into the CPOG
-representation (see Fig. \ref{fig:flow}), avoiding likely human errors. In turn, this will
+representation (see Figure~\ref{fig:flow}), avoiding likely human errors. In turn, this will
 allow us to derive the hardware microcontroller and make a consistent comparison (in terms of
 area, power consumption, latency, etc.) with the one which the ARM Cortex-M0 embeds.
 
@@ -877,15 +868,16 @@ helping with this work.
 	ARM DDI 0419C (ID092410), 2010.
 	
 \bibitem{haskell}
-	----. \emph{``Haskell 98 Language and Libraries The Revised Report''}. 
-	Simon Peyton Jones (editor).
+	S. P. Jones (editor) et al.
+	\emph{``Haskell 98 Language and Libraries The Revised Report''}.
+	December 2002.
 	
 \bibitem{eventB}
 	C. Métayer, J.-R. Abrial, L. Voisin. \emph{``Event-B Language''}. 
 	Project IST-511599. $31^{st}$ May 2005
 	
 \bibitem{webArticle}
-	Jim Turley. \emph{``CPUs Get Cheaper; Transistors Get More Expensive''}. Electronic
+	J. Turley. \emph{``CPUs Get Cheaper; Transistors Get More Expensive''}. Electronic
 	Engineering Journal: \url{http://www.eejournal.com/archives/articles/20151104-synopsys}.
 	November 4, 2015
 	
@@ -895,9 +887,12 @@ helping with this work.
     2010
     
 \bibitem{summevent}
-	Jan Welte, Hansjörg Manz. \emph{``openETCS D2.1: Report on existing methodologies''}.
+	J. Welte, H. Manz. \emph{``openETCS D2.1: Report on existing methodologies''}.
 	ITEA2 Project Technical Report.
 	January 2012
+	
+\bibitem{repo}
+	A. Mokhov, A. de Gennaro, P. Stankaitis. \url{https://github.com/allegroCoder/microprograms}. Github repository.
     
 \end{thebibliography}
 
