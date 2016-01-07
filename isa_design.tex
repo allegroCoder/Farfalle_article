@@ -69,20 +69,22 @@ Email: paulius.stankaitis@ncl.ac.uk}}
 \maketitle
 
 \begin{abstract}
-Adopting a systematic approach for the design of a processor instruction sets is
-instrumental for tackling the complexity, which rules most of modern processors.
+Adopting a systematic approach for the design of processor instruction sets is
+instrumental for tackling the complexity of modern processors.
 
-We present a tool-chain which follows the designer through all the phases of the
-design, from the specification of instructions to the hardware synthesis of a
-microcontroller. The flow is also meant to simplify the understanding of the
+We present a tool-chain which follows the designer through all the design phases,
+from the specification of instructions to the hardware synthesis of a
+microcontroller. The flow is also meant to facilitate the understanding of the
 Instruction Set Architecture (ISA) reference manuals. Often, these documents are
-semi-formal, hard to read and fully understand. We believe that designers will
+semi-formal, hard to read and fully understand, especially when dealing with
+highly concurrent implementations. We believe that designers will also
 benefit from a visual graph-based model, automatically derived from the ISA
 specification, and customisable to fit different needs. Some of the tools have
 already been developed and tested on ARMv6-M architecture, others yet need to be
-fully implemented.
+fully implemented. The design flow will be integrated into the Workcraft framework.
 
-The design flow will be integrated inside the Workcraft framework. We also compare
+This paper presents a new domain-specific language for ISA specification and demonstrates
+how it can be used for the specification of ARMv6-M microcontroller. We also compare
 the presented approach with the others available in the literature.
 \end{abstract}
 
