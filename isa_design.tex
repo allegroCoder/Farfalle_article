@@ -51,7 +51,7 @@
 }
 
 
-\title{Towards a Systematic and Automated Approach in the Design of Processor Instruction Sets}
+\title{Farfalle: a Domain-Specific Language for Processor Instruction Sets}
 
 \author{
 \IEEEauthorblockN{Alessandro de Gennaro}
@@ -106,7 +106,7 @@ presents a design flow for an easier specification, visualisation, simulation,
 customisation and hardware synthesis of instruction sets.
 
 The consultation of an ISA reference manual (i.e. ARMv6-M~\cite{armManual}) can be
-a difficult and tedious operation. Anthony Fox, in his attempt to describe a model
+difficult and tedious. Anthony Fox, in his attempt to describe a model
 of the ARMv7 instruction set, argues: ``official reference manuals are large,
 stretching to many hundreds of pages - one can easily overlook subtle details or
 become bogged down with ``uninteresting'' background information''~(\cite{armv7},
@@ -121,7 +121,7 @@ efficiently represent concurrent and sequential behaviours, and already come wit
 tested tool-kit for the customisation, encoding and hardware synthesis~\cite{workcraft}\cite{satEncoding}\cite{acsd}.
 
 We propose a new domain-specific language for ISA specification. The current
-implementation is embedded in \textit{Haskell}~\cite{haskell}. This is high-level
+implementation is embedded in \textit{Haskell}~\cite{haskell}. This is a high-level
 functional language that provides static type checking and inference capabilites,
 as well as useful predefined constructs and classes that we rely on in our
 implementation (i.e. the Monad class).
@@ -140,8 +140,8 @@ structure can be found in~\cite{maxPhd}. The author uses Conditional Partial Ord
 Graphs to visually describe the instructions of the Intel 8051 Microcontroller.
 Yet, he used them for building an asynchronous controller and managing the internal
 execution flow of the datapath elements. The manual construction of partial orders
-is an error-prone process. Connecting all the operations taking into account their
-dependencies and order is a complex task. This further inspired our research, and
+is an error-prone process. Connecting all the operations, taking into account their
+dependencies and order, is a complex task. This further inspired our research, and
 led us to bridge this gap with an automated approach.
 
 Regarding the language we chose to adopt, it is not difficult to find other cases
@@ -157,8 +157,8 @@ abstract layers. Each of these layers describes a particular aspect of the
 instruction set. The deeper the designer explores this hierarchical representation,
 the more refined will be the final system.
 
-Another example can be found in \cite{armv7}. The authors here built a framework
-which can be extended to tailor instruction sets. They use a monadic programming
+Another example can be found in \cite{armv7}. The authors, in there, built a framework
+which can be extended to tailor instruction sets. They use the monadic programming
 style, based on three basic operations: \textit{return}, \textit{bind} and
 \textit{parallel}. These are meant to mimic the flow of an entity (the hardware
 system), which is always returned as a result of the execution of an instruction.
@@ -168,25 +168,23 @@ Cortex-A8 processor. An additional example of how an ISA might be specified insi
 a tool is present in \cite{isaXml}. Both the modules and the instructions here are
 introduced via a xml-based language, fairly readable but not very flexible.
 
-In this work we aim at developing a Domain Specific Language based on Haskell. This will be
+In this work we aim at developing a domain-specific language based on Haskell. This will be
 adopted for the representation of the ARMv6-M, used as the case study. The target
 representation abstracts some details such as the bit-length of the registers or immediate
 values. The goal is the integration of the framework presented in Section~\ref{sec:struct}
-into a systematic design flow (Section~\ref{sec:func}), while easier the understanding of
-a processor instruction set with a graph-based model (Section~\ref{sec:read}).
+into a systematic design flow (Section~\ref{sec:func}), and the simplification of the understanding of
+processor instruction sets with a graph-based model (Section~\ref{sec:read}).
 
 %------------------------------------------------
 
-% Alex
-\section{Domain Specific Language}
+\section{A Domain-Specific Language: Farfalle}
 \label{sec:dsl}
-% DSL introduction
 The language used to describe the framework is Haskell~\cite{haskell}. This is a 
 functional language with high abstraction capabilities.
 We followed the path, already explored in \cite{armv7}, implementing the \textit{monad class}
-to build the infrastructure of the domain specific language (DSL).
+to build the infrastructure of the domain-specific language (DSL).
 
-The processor is seen as an entity composed by a combination of an internal and
+In Farfalle, the processor is seen as an entity composed by a combination of an internal and
 external storage. Respectively, the former is represented by a set of registers,
 while the latter by a memory that contains both instructions and data; in compliance with the
 von Neumann architecture. 
@@ -206,22 +204,15 @@ framework. A characterisation of the design flow derived by this approach is pre
 Section~\ref{sec:func}, while a brief description of the verification side, related to Event-B
 interpretation, is discussed in Section~\ref{sec:ver}.
 
-% Alex
 \subsection{Structure of the framework}
 \label{sec:struct}
-% Description of the microprogram file
-%  - how could be extended to fit the microprocessor model
-%  - basic functions which each processor implements
-%  - types used (Register - ComputationType - Address/Value)
-%  - Monad class
-%  - Processor seen as a Memory/register entity which evolves over time
 What marks our approach is the high degree of flexibility and abstraction that can
-be tailored to every processor. The framework we present in this document is composed
+tailor to every processor. The framework we present in this document is composed
 by different layers (modelled in various and interconnected modules). Each of them plays 
 an important role in the structure.
 
 The module in charge of modelling the low-level hardware functions is named
-\textit{basics}. Positioned at very bottom layer, this defines the ways through which the
+\textit{basics}. Positioned at very bottom layer, defines the ways through which the
 memory elements can be accessed, the behaviour of the data-path components, 
 as well as the monad basic functions: return and bind.
 
@@ -233,8 +224,8 @@ fifth location in the register file). Memory is accessed via an integer type add
 Immediate values are also internally seen as integers. This approach is not
 accurate. Some of the features -- the bit length of the registers, or the
 endianness of the data -- are lost. Nonetheless, the high level of abstraction of
-the framework allows the interpretation of the model from several point of view (see
-Section~\ref{sec:func}).
+the framework allows the interpretation of the model from several points of view (see
+Section~\ref{sec:func}), and is eventually enough for the control unit synthesis.
 
 Finally, ComputationType is defined. This is a flexible type in input to the
 arithmetic logic unit (ALU), which can be modified according to the ISA
@@ -245,7 +236,7 @@ Therefore, ComputationType is not a fixed type and can be extended for fitting d
 ALU architectures.
 
 \textit{Microprogram} is the interface based on the low-level module just described.
-In this, just a few operations, always present in a general purpose processor, are
+In this, just a few operations, generically present in a general purpose processor, are
 implemented. The function for incrementing the program counter and fetching
 the next instruction, the pop and push instructions, the interface methods for accessing
 the registers and memory (internally modelled in the module basics).
@@ -255,9 +246,9 @@ the stack pointer.
 
 \textit{ISA\_model} is the module where the user is supposed to introduce the custom 
 instruction set architecture. Based on the bottom layers, this
-module can be customised adding other special purpose registers and types for the ALU.
+module can be customised adding other special purpose registers and extending ALU types.
 Most importantly, this will contain all the instructions one wants to include in a custom ISA.
-This will act as an interface for the software level simulation and will be taken into
+This will act as an interface for the software-level simulation and will be taken into
 account for the conversion towards other models and languages (Section~\ref{sec:func}).
 
 \textit{Main} is the module meant for the high-level software simulation, in here
@@ -281,18 +272,15 @@ this approach flexible and scalable.
 In Section~\ref{sec:arm} we will show how this framework has been implemented and extended
 to model the ARMv6-M.
 
-% Alex
 \subsection{Functionalities \& interpretations}
 \label{sec:func}
-% Description of the tool-chain and of the ISA design flow
 Our main goal with this article is to open the path towards an easier specification and
 visualisation of instruction sets. Nonetheless, quite a few other interpretations can be
-given to this work. The Domain Specific Language indeed, once used to model
+given to this work. The domain-specific language indeed, once used to model
 a processor, can be potentially translated into other languages. In turn, they
 can be progressively employed with the advantages and tools they come with. It is worth
 mentioning that some of the functionalities discussed in this section have not been
-implemented yet. Though, they will be part of our future work in this area (see 
-Section~\ref{sec:frd}).
+implemented yet. Though, they will be part of our future work (see Section~\ref{sec:frd}).
 
 The ISA specification might be converted into Event-B language~\cite{eventB}. This is a
 formal technique used to analyse the model at the system level. It comes with some theorem
@@ -302,19 +290,19 @@ be particularly useful when applied to instruction sets. It falls within the sid
 formal \textit{verification} (see Section~\ref{sec:ver} for a detailed description).
 
 \textit{Visualisation} and \textit{synthesis} are two other
-interpretations which can be given to this framework, somehow connected to each other via
+interpretations which can be given to this framework, connected to each other via the
 CPOG formalism. Even though Haskell provides readable and simple constructs, instruction
 set specifications are intrinsically difficult to read and understand.
-Capturing all the dependencies between every micro-operation within the instruction is
-complex and, as already mentioned, error-prone. Reading the whole reference manual can take
-a long time. In the light of the above, formal specification can be converted into partial orders,
+Capturing all the dependencies between the micro-operations within instructions is
+complex and error-prone. Reading the whole reference manual can take a long time.
+In the light of the above, formal specification can be converted into partial orders,
 a visual graph-based representation composed by nodes and arcs, much more comprehensible 
 than reference psuedo-code or Haskell statements.
 
 \begin{figure}[ht!]
 \begin{center}
 	\includegraphics[width=\linewidth]{IMG/flow.eps}
-	\caption{Design flow supported by the Haskell-based framework.}
+	\caption{Design flow supported by Farfalle.}
 	\label{fig:flow}
 \end{center}
 \end{figure}
@@ -329,10 +317,8 @@ met.
 
 The whole design-flow is illustrated in Figure~\ref{fig:flow}.
 
-%Paulius
 \subsection{Verification with Event-B}
 \label{sec:ver}
-%------------------------------------------------
 Design validation process is instrumental for any kind of systems. A typical system design
 process requires numerous minor optimization modifications. The system needs to be 
 re-validated after each refinement step, making this phase not particularly cost and time
@@ -342,7 +328,6 @@ engineers to mathematical techniques can be very expensive. Therefore, our appro
 include methods and tool support, which intends to hide mathematical complexity by automating
 validation process. 
 
-% Specification of Model%
 Event-B~\cite{eventbbook}, originated from well known formalism called B method, is one of the most used
 specification languages in safety critical software development area. Over the years, Event-B
 proved to be successful mainly due to a few large academic research projects. Nowadays, this
@@ -383,11 +368,8 @@ invariants hold after event.
 
 %------------------------------------------------
 
-% Paulius
 \section{A case study: ARMv6-M}
 \label{sec:arm}
-% Introduction of ARMv6-M ISA
-
 Case study section intends to demonstrate potential of our domain specific language by
 analysing ARM Cortex M0+ microprocessor instruction set. This section starts with a brief
 description of the ARMv6-M instruction set and information we used to construct our model
@@ -398,10 +380,8 @@ manual~\cite{armManual}, which includes short descriptions of each instruction a
 functionality pseudocode and encodings. We used this information to build an instruction set
 model of this specific microprocessor. 
 
-% Alex
 \subsection{Features \& issues at the specification phase}
 \label{sec:feat}
-% Description of the model in Haskell
 The faithfulness of ARMv6-M model with the reference specification was our main concern.
 We aimed at representing each instruction listed in the ISA document using the
 framework presented in this work, with the least loss of information. This required to be
@@ -423,7 +403,7 @@ the microprogram module. Therefore, many of the instructions characterised are s
 the methods present at the bottom layers. For instance, the operation
 \textit{incAndFetchInstruction} (depicted in the partial order in Figure~\ref{fig:andPO})
 consists of three sequential micro-operations: incrementing the program counter (PC)
-register, writing the result back into such a register and eventually moving the contents of
+register, writing the result back into such a register and eventually moving the content of
 the memory location pointed out by the PC into the instruction register (IR). This operation is
 executed at the end of nearly all the instructions, except for the ones involving any branching
 mechanisms. Another example which can be analysed is the \textit{pop} operation. It is in charge of
@@ -458,7 +438,6 @@ Given this general introduction about the model, in the next section some of the
 characterised in our representation will be showed, pinpointing at the high level of
 similarity with the instruction set that we aimed at shaping.
 
-% Alex
 \subsection{Target model description}
 \label{sec:mod}
 All the instructions included in the ARMv6-M have been characterised in our representation.
@@ -502,8 +481,8 @@ if setflags then
     APSR.V = overflow;
 \end{lstlisting}
 
-The pseudocode specification of the instructions have been translated into the domain
-specific language (described in Section~\ref{sec:dsl}). During the conversion process, we
+The pseudocode specification of the instructions have been translated into Farfalle 
+(described in Section~\ref{sec:dsl}). During the conversion process, we
 assumed that all the parameters which are involved in the internal operations are available
 and ready to be used. This is the case for the \textit{imm32} value, for instance, present in
 some of the instructions. This is over 32 bits, and is obtained extending the immediate value
@@ -518,9 +497,9 @@ Listing~\ref{lis:add}). Three parameters are needed for this instruction: \texti
 therefore is not considered in our implementation. We can similarly characterise this instruction
 via the framework presented in this work, see Listing below.\\
 
-\begin{lstlisting}[caption=ADD (immediate) instruction - Haskell-based specification,
+\begin{lstlisting}[caption=ADD (immediate) instruction - Farfalle specification,
 frame=single, label=lis:addH]
-add_ImmT1 rn rd imm32  = do
+add_ImmT1 rn rd imm32 = do
     result <- alu (adcRegImm rn imm32 0)
     writeRegister rd result
     updateN result
@@ -543,8 +522,8 @@ value is 0, this is implemented inside the function \textit{updateZ}. At the end
 Haskell specification is present the \textit{incAndFetchInstruction}, which is in charge of
 updating the program counter register and fetching the next instruction.
 
-Another instruction which might be of interest to the reader is the store, also known as STR
-(register). This instruction computes the address where to store a chunk of data, from a base
+Another instruction which might be of interest is the store, also known as STR (register).
+This instruction computes the address where to store a chunk of data, from a base
 address and an offset, both defined into two registers. Although the offset can be optionally
 shifted in a general ISA architecture, this feature has not been implemented in the ARMv6-M.
 The \textit{shift\_n} variable in fact, which is supposed to contain the number of bits that
@@ -560,7 +539,7 @@ MemU[address,4] = R[t];
 \end{lstlisting}
 
 \noindent
-The specification based on the Haskell framework is listed in Listing~\ref{lis:strH}.
+The specification based on Farfalle is listed in Listing~\ref{lis:strH}.
 According to the source description, this instruction takes in input three registers.
 \textit{rn} contains the base address, \textit{rm} the optionally shifted offset (shifted by
 0 bits in this implementation), and \textit{rt} that contains the data chunk to be stored
@@ -570,7 +549,7 @@ the addition, as described in Section~\ref{sec:feat}. \textit{writeMemory} is on
 procedure implemented in the module basics (see Section~\ref{sec:struct}). \textit{readBit}
 procedure, simply returns the bit 29, where the carry flag is stored.\\
 
-\begin{lstlisting}[caption=STR (register) instruction - Haskell-based specification,
+\begin{lstlisting}[caption=STR (register) instruction - Farfalle specification,
 frame=single, label=lis:strH]
 str_RegT1 rm rn rt = do
     offset <- alu (shlRegImm rm 0 (readBit apsr 29))
@@ -584,12 +563,8 @@ reference pseudocode. The degree of precision the designer can go for depends on
 the source specification have been characterised with. There has not been loss of
 information in the conversion process.
 
-% Alex
 \subsection{Visualisation}
 \label{sec:read}
-% Similarities between pseudo reference code and our model
-% Show Partial order examples derived by hand
-% Maybe an encoding example
 Going towards a more comprehensible ISA representation was one of our main goals. As discussed in
 Section~\ref{sec:intro} in fact, often instruction set architecture reference documents are hard to
 read and fully understand. We believe that having a visual representation of the operations
@@ -615,7 +590,7 @@ $A \rightarrow B$ and $C \rightarrow D$ are concurrent paths. A detailed
 description can be found in \cite{andreyPhd}.
 
 In the light of the above, we are working on automating the conversion process from the
-Haskell-based specification to partial orders. The tool will be able to analyse the
+Farfalle specification to partial orders. The tool will be able to analyse the
 \textit{ISA\_module} file, capture the dependencies between the operations within each
 instruction and build a partial order. 
 
@@ -624,7 +599,7 @@ arithmetic logic unit can be adopted for the execution of
 different operations: i.e. addition, multiplication, shift, etc. One might want to represent
 each single operation separately with a different node 
 (trading off some readability with accuracy), or raise the
-level of abstraction losing the information about the actual operation.
+level of abstraction losing the internal information.
 
 \begin{figure}[ht!]
 \begin{center}
@@ -648,7 +623,7 @@ A dependency should be inserted, as in the graph in Figure~\ref{fig:depPO}(c).
 The following example clarifies the above issue. 
 Listing~\ref{lis:and} gives a specification of the AND (register) instruction (ARMv6-M ISA~\cite{armManual}).\\
 
-\begin{lstlisting}[caption=AND (register) instruction - Haskell-based specification,
+\begin{lstlisting}[caption=AND (register) instruction - Farfalle specification,
 frame=single, label=lis:and]
 and_RegT1 rm rdn = do
     shifted <- alu (shlRegImm rm 0 apsr[29])
@@ -686,11 +661,11 @@ clearly expressed via arcs. In addition, the graph-based model provides a good d
 of fidelity; combined with the code-based specification it can lead to a good tradeoff
 between readability and accuracy.
 
-Another example worth a discussion is the unconditional branch. This
+Another example which worths a discussion is the unconditional branch. This
 instruction simply causes a branch to a target address. The Haskell-based specification is
 depicted below:\\
 
-\begin{lstlisting}[caption=B instruction - Haskell-based specification,
+\begin{lstlisting}[caption=B instruction - Farfalle specification,
 frame=single, label=lis:and]
 b imm32 = do
     nextInstrLocation <- alu (adcRegImm pc imm32 0)
@@ -768,11 +743,9 @@ this process.
 
 %------------------------------------------------
 
-% Alex
 \section{Conclusion}
 \label{sec:conclusion}
-% Come up with some interesting conclusions
-This work represents the first step towards a formal and yet readable specification of
+This work represents the first step towards a formal and readable specification of
 processor instruction sets. We demonstrated how the specification of a real ISA, which has
 been embedded into the \verb|ARM Cortex-M0|, can be specified via our framework without
 loosing any information or lowering the accuracy of the representation.
@@ -791,7 +764,6 @@ hope to be able to complete, together with the whole community in this field.
 %Alex
 \subsection{Future research directions}
 \label{sec:frd}
-% Future research direction
 Much research can be carried on about the work presented. First of all we will expand the
 framework developed, providing some procedures to capture the internal instruction
 dependencies, automatically deriving a partial order according to the level of abstraction
@@ -810,10 +782,7 @@ sets of the Texas Instruments MSP430 and the Intel 8051 processors. As is pointe
 \cite{webArticle}, nowadays there are quite a few architectures with a relevant market size -
 by ARM, ARC, Xtensa, MIPS. Unit volumes are progressively increasing, hence we believe the
 need for modelling and experimenting by these companies will do so. Eventually, designers and
-end users will benefit from a systematic approach to the design of processor instruction sets.\\
-
-\noindent\textbf{Acknowledgements:} The authors would like to thank Dr. Andrey Mokhov for
-helping with this work.
+end users will benefit from a systematic approach to the design of processor instruction sets.
 
 %------------------------------------------------
 
