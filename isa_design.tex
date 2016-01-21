@@ -289,15 +289,14 @@ no inconsistencies between instructions. This is an interesting feature itself, 
 be particularly useful when applied to instruction sets. It falls within the side of the
 formal \textit{verification} (see Section~\ref{sec:ver} for a detailed description).
 
-\textit{Visualisation} and \textit{synthesis} are two other
-interpretations which can be given to this framework, connected to each other via the
-CPOG formalism. Even though Haskell provides readable and simple constructs, instruction
+\textit{Visualisation} is another interpretation which can be given to this framework.
+Even though Haskell provides readable and simple constructs, instruction
 set specifications are intrinsically difficult to read and understand.
 Capturing all the dependencies between the micro-operations within instructions is
-complex and error-prone. Reading the whole reference manual can take a long time.
-In the light of the above, formal specification can be converted into partial orders,
-a visual graph-based representation composed by nodes and arcs, much more comprehensible 
-than reference psuedo-code or Haskell statements.
+complex and error-prone. Reading and understanding the whole reference manual can take a long time.
+In the light of the above, we decided to use the conditional partial order graph model to represent
+the behaviour of the ISA. A partial order indeed, can be extracted by the formal specification
+of each instruction, providing an easier environment for a better understanding by designers.
 
 \begin{figure}[ht!]
 \begin{center}
@@ -307,13 +306,13 @@ than reference psuedo-code or Haskell statements.
 \end{center}
 \end{figure}
 
-This allows the user to employ the tool-chain around the conditional partial order
+This allows to employ the tool-chain around the conditional partial order
 graphs, enabling the visual customisation of the dependencies of the instructions in 
-\verb|Workcraft| and CPOG-based synthesis tools. A fairly
-accurate measurement of the size of the final microcontroller for the processor control
-unit can be automatically derived therefore, allowing the designer to come back at the
-specification phase if some of the requirements (area, power consumption) have not been
-met.
+\verb|Workcraft|, and the usage of CPOG-based \textit{synthesis} tools. A fairly
+accurate measure of the size of the final microcontroller for the processor control
+unit can be automatically derived therefore (with a deep \textit{hardware simulation}),
+allowing the designer to come back at the specification phase if some of the requirements
+(area, power consumption) are not met.
 
 The whole design-flow is illustrated in Figure~\ref{fig:flow}.
 
