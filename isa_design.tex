@@ -103,7 +103,7 @@ same amount of area, following Moore's law. In turn, design complexity of these
 systems progressively increases. This led research to be focused on raising the
 level of abstraction of the languages used at the early-stages of design. This work
 presents a design flow for an easier specification, visualisation, simulation,
-customisation and hardware synthesis of instruction sets.
+verification and hardware synthesis of instruction sets.
 
 The consultation of an ISA reference manual (i.e. ARMv6-M~\cite{armManual}) can be
 difficult and tedious. Anthony Fox, in his attempt to describe a model
@@ -163,12 +163,12 @@ style, based on three basic operations: \textit{return}, \textit{bind} and
 \textit{parallel}. These are meant to mimic the flow of an entity (the hardware
 system), which is always returned as a result of the execution of an instruction.
 Instructions can be bound together either sequentially or in parallel. Here, the
-case study used is the ARMv7, a widespread instruction set embedded by the 
+ARMv7 is used as case study, a widespread instruction set embedded by the 
 Cortex-A8 processor. An additional example of how an ISA might be specified inside
 a tool is present in \cite{isaXml}. Both the modules and the instructions here are
 introduced via a xml-based language, fairly readable but not very flexible.
 
-In this work we aim at developing a domain-specific language based on Haskell. This will be
+With this work, we aim at developing a domain-specific language based on Haskell. This will be
 adopted for the representation of the ARMv6-M, used as the case study. The target
 representation abstracts some details such as the bit-length of the registers or immediate
 values. The goal is the integration of the framework presented in Section~\ref{sec:struct}
@@ -189,7 +189,7 @@ external storage. Respectively, the former is represented by a set of registers,
 while the latter by a memory that contains both instructions and data; in compliance with the
 von Neumann architecture. 
 
-The processor executes instructions, that modify the state of the modelled machine.
+The processor executes instructions that modify the state of the modelled machine.
 
 $$P(Regs, Mem) \Rightarrow P'(Regs, Mem)$$
 
