@@ -456,7 +456,7 @@ introduced to the architecture as part of the Thumb-2 technology in ARMv6T2.
 \end{center}
 \end{figure}
 
-An interesting feature of the ISA is that some instructions have two opcodes, named T1 and
+An interesting feature of the ISA is the association of some instructions with two opcodes, named T1 and
 T2. This provides a more flexible architecture, which in turn comes up with a
 flexible assembly language. This is the case for the \textit{ADD (immediate)} instruction,
 for instance. The first encoding T1 has a seven bit opcode, and the rest of the
@@ -518,14 +518,14 @@ to the reference document, the procedure \textit{EncodingSpecificOperation()} is
 charge of performing the right operations depending on the encoding read. As already
 mentioned, we assume this step to be already performed beforehand to instruction execution.
 All the other statements are quite similar to the source counterparts.
-The only thing worth mentioning is that the alu operation is in charge of
+The only thing worth mentioning is that the ALU operation is in charge of
 setting the carry and the overflow bits internally. That is the reason why those two are not
 present in the Haskell implementation. The \textit{IsZeroBit()} procedure simply checks if a
 value is 0, this is implemented inside the function \textit{updateZ}. At the end of the
-Haskell specification is present the \textit{incAndFetchInstruction}, which is in charge of
+Haskell specification, \textit{incAndFetchInstruction} is present, which is in charge of
 updating the program counter register and fetching the next instruction.
 
-Another instruction which might be of interest is the store, also known as STR (register).
+Another instruction which might be of interest is the store, defined as STR (register).
 This instruction computes the address where to store a chunk of data, from a base
 address and an offset, both defined into two registers. Although the offset can be optionally
 shifted in a general ISA architecture, this feature has not been implemented in the ARMv6-M.
@@ -563,7 +563,7 @@ str_RegT1 rm rn rt = do
 
 The two Haskell-based specifications showed along this section are fairly similar to the
 reference pseudocode. The degree of precision the designer can go for depends on the accuracy
-the source specification have been characterised with. There has not been loss of
+the source specification are characterised with. There has not been loss of
 information in the conversion process.
 
 \subsection{Visualisation}
@@ -623,7 +623,8 @@ in order to avoid a simultaneous access at the same location of the register fil
 because the two writing mechanisms can be triggered concurrently.
 A dependency should be inserted, as in the graph in Figure~\ref{fig:depPO}(c).
 
-The following example clarifies the above issue. 
+A couple of examples will be showed along this section, in order to give to the reader
+an idea of the \textit{graph extraction} outcome.
 Listing~\ref{lis:and} gives a specification of the AND (register) instruction (ARMv6-M ISA~\cite{armManual}).\\
 
 \begin{lstlisting}[caption=AND (register) instruction - Farfalle specification,
@@ -661,7 +662,7 @@ case extracted and depicted in the partial order, for an increased accuracy.
 The graph in Figure~\ref{fig:andPO} is more readable than the Haskell-based specification,
 listed in Listing~\ref{lis:and}. The dependencies between the various operations are
 clearly expressed via arcs. In addition, the graph-based model provides a good degree
-of fidelity; combined with the code-based specification it can lead to a good tradeoff
+of fidelity; combined with the code-based specification, it can lead to a good tradeoff
 between readability and accuracy.
 
 Another example which worths a discussion is the unconditional branch. This
@@ -694,7 +695,7 @@ and is implicit to the incAndFetchInstruction procedure either.
 \end{center}
 \end{figure}
 
-We did not have the time yet to implement the tool for the conversion.
+We did not implement the tool for the conversion yet.
 The example showed along this section has been obtained by hand. Therefore, we reserve for a
 future article the results and considerations related to the synthesis of the final
 controller.
